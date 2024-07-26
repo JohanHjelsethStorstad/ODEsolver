@@ -19,12 +19,7 @@ namespace Logger {
 	};
 
 	enum class LogFile {
-		ReadParametersFromConfig,
-		PreFrameSetContext,
-		PerformanceTest,
-		ConfigLog,
 		ODE,
-		GENERALLOG,
 	};
 
 	struct LogConfig {
