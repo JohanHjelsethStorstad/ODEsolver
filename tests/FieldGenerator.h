@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Structures.h"
+#include "../src/Structures.h"
 #include <functional>
 
 namespace ODE::Tests {

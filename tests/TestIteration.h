@@ -1,6 +1,6 @@
 #pragma once
-#include "IterationScheme.h"
-#include "Structures.h"
+#include "../src/IterationScheme.h"
+#include "../src/Structures.h"
 #include <vector>
 
 namespace ODE::Tests {

@@ -1,14 +1,17 @@
 # Source files
-SRCS = src/main.cpp src/IterationScheme.cpp src/Logger.cpp src/PrimeFieldInferation
+SRCS = src/main.cpp src/IterationScheme.cpp src/Logger.cpp src/PrimeFieldInferation.cpp tests/FieldGenerator.cpp tests/TestIteration.cpp
 
 # Object files directory
 OBJDIR = build
 
 # Object files
-OBJS = $(OBJDIR)/main.o
+OBJS = $(SRCS:src/%.cpp=$(OBJDIR)/%.o)
 
 # Executable name
 EXEC = $(OBJDIR)/MyExecutable
+
+# Compiler flags
+CXXFLAGS = -Wall -Wextra -O2
 
 # Default target
 all: $(EXEC)

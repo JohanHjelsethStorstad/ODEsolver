@@ -2,7 +2,7 @@
 
 std::array<Logger::LogConfig, 10> Logger::Loggers::loggers = {
 	{
-		{LogFile::ODE, "ODE.txt"},
+		{LogFile::ODE, "~/ODESolverLogs/ODE.txt"},
 	}
 };
 
@@ -10,7 +10,7 @@ Logger::Logger::Logger(const std::string& filepath) : path(filepath)
 {
 	this->open();
 	if (!file.is_open()) {
-		throw std::runtime_error("Failed to open log file: " + filepath);
+		//throw std::runtime_error("Failed to open log file: " + filepath);
 	}
 }
 
@@ -28,7 +28,7 @@ Logger::Logger& Logger::Logger::close()
 
 Logger::Logger& Logger::Logger::open() {
 	if (!file.is_open()) {
-		file.open("logs/" + path, std::ios_base::app);
+		file.open(path, std::ios_base::app);
 	}
 	return *this;
 }
