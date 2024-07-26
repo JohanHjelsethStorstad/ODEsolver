@@ -1,4 +1,5 @@
 #pragma once
+#include "Logger.h"
 #include <array>
 #include <string>
 
