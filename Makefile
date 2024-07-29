@@ -1,5 +1,5 @@
 # Source files
-SRCS = src/main.cpp src/IterationScheme.cpp src/Logger.cpp src/PrimeFieldInferation.cpp tests/FieldGenerator.cpp tests/TestIteration.cpp
+SRCS = src/main.cpp src/IterationScheme.cpp src/Logger.cpp src/PrimeFieldInferation.cpp tests/FieldGenerator.cpp tests/TestIteration.cpp tests/Plot.cpp
 
 # Object files directory
 OBJDIR = build
