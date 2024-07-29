@@ -11,14 +11,18 @@ OBJS = $(SRCS:src/%.cpp=$(OBJDIR)/%.o)
 EXEC = $(OBJDIR)/MyExecutable
 
 # Compiler flags
-CXXFLAGS = -Wall -Wextra -O2
+NUMPY_INCLUDE = $(shell python3 -c "import numpy; print(numpy.get_include())")
+CXXFLAGS = -Wall -Wextra -O2 -I /usr/include/python3.10 -I $(NUMPY_INCLUDE)
+
+# Linker flags
+LDFLAGS = -lpython3.10
 
 # Default target
 all: $(EXEC)
 
 # Rule to build the executable
 $(EXEC): $(OBJS)
-	$(CXX) $(OBJS) -o $(EXEC)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(EXEC) $(LDFLAGS)
 
 # Rule to build object files
 $(OBJDIR)/%.o: src/%.cpp | $(OBJDIR)

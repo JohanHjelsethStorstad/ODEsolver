@@ -2,9 +2,9 @@
 #include "../src/IterationScheme.h"
 #include "../src/Structures.h"
 #include <vector>
+#include "../lib/matplotlib-cpp/matplotlibcpp.h"
 
 namespace ODE::Tests {
-    template <int iterations>
     void runTestSuite();
 
     class TestIteration {
