@@ -1,6 +1,8 @@
 #pragma once
 #include <array>
 #include <cmath>
+#include <iostream>
+#include <vector>
 
 namespace Structures {
 	template<typename T>
@@ -160,4 +162,27 @@ namespace Structures {
 	Arrow<T> operator*(T scalar,const Arrow<T>& arrow) {
 		return { arrow.start, { arrow.start.x + (arrow.end.x - arrow.start.x) * scalar, arrow.start.y + (arrow.end.y - arrow.start.y) * scalar } };
 	}
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Structures::Point<T>& point) {
+	os << "(" << point.x << ", " << point.y << ")";
+	return os;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Structures::Arrow<T>& arrow) {
+	os << "Arrow: " << arrow.start << " -> " << arrow.end;
+	return os;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec) {
+	os << "[";
+	for (int i = 0; i < vec.size(); i++) {
+		os << vec.at(i);
+		if (i != vec.size() - 1) os << "\n";
+	}
+	os << "]";
+	return os;
 }

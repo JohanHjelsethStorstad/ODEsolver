@@ -1,9 +1,8 @@
 #include "Plot.h"
 
 void ODE::Tests::Plot::plotArrows(const std::vector<Structures::Arrow<double>>& arrows) {
-    for (const Structures::Arrow<double>& arrow : arrows) {
+    for (const Structures::Arrow<double>& arrow : arrows) 
         plotArrow(arrow);
-    }
 }
 
 void ODE::Tests::Plot::plotArrow(const Structures::Arrow<double>& arrow) {

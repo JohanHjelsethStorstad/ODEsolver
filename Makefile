@@ -8,7 +8,7 @@ OBJDIR = build
 OBJS = $(SRCS:src/%.cpp=$(OBJDIR)/%.o)
 
 # Executable name
-EXEC = $(OBJDIR)/MyExecutable
+EXEC = $(OBJDIR)/ODESolver
 
 # Compiler flags
 NUMPY_INCLUDE = $(shell python3 -c "import numpy; print(numpy.get_include())")
