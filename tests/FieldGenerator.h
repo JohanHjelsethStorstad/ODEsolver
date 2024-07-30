@@ -9,8 +9,8 @@ namespace ODE::Tests {
         double height;
         double startx;
         double starty;
-        double endx() const { return startx + width; }
-        double endy() const { return starty + height; }
+        inline double endx() const { return startx + width; }
+        inline double endy() const { return starty + height; }
     };
 
     class FieldGenerator {
@@ -40,8 +40,14 @@ namespace ODE::Tests {
     class FieldGeneratorFunction : public FieldGenerator {
     private:
         std::function<Structures::Point<double>(Structures::Point<double>)> functions;
+        std::function<Structures::Point<double>(double)> exactSolution;
     public:
-        FieldGeneratorFunction(double delta, FieldGeneratorWindow window, std::function<Structures::Point<double>(Structures::Point<double>)> functions) : FieldGenerator(delta, window), functions(functions) {}
+        FieldGeneratorFunction(
+            double delta, 
+            FieldGeneratorWindow window, 
+            std::function<Structures::Point<double>(Structures::Point<double>)> functions,
+            std::function<Structures::Point<double>(double)> exactSolution
+        ) : FieldGenerator(delta, window), functions(functions), exactSolution(exactSolution) {}
         Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const override;
     };
 }
