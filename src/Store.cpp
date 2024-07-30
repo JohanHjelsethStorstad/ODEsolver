@@ -42,6 +42,6 @@ void Store::Store::store(std::vector<ODE::Trajectory> trajectories, const std::s
 void Store::Store::store(ODE::Trajectory trajectory, const std::string& tag) {;
     Structures::Point<double> start = trajectory.getStart();
     for (const auto& point : trajectory.getPoints()) {
-        file << "Point" << "[" << tag << "]" << "{" << start.x << start.y << "}" << "(" << point.x << "," << point.y << ")\n";
+        file << "Point" << "[" << tag << "]" << "{" << start.x << "," << start.y << "}" << "(" << point.x << "," << point.y << ")\n";
     }
 }

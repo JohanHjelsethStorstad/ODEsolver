@@ -16,7 +16,9 @@ void ODE::Tests::runTestSuite() {
     auto Heun = std::make_shared<BucherTableau::ExplicitButcherTableau<2>>(BucherTableau::ExplicitButcherTableau<2>::Heun());
     std::vector<std::shared_ptr<BucherTableau::IButcherTableau>> schemes = {Euler, RK4, RK3, Heun};
 
-    std::vector<Structures::Point<double>> startPoints = {{1.5, 1.5}, {-1.5, -1.5}, {3, 1}, {-3, 1}};
+    const std::vector<Structures::Point<double>> startPoints = {
+        {1.5, 1.5}, {-1.5, -1.5}, {3, 1}, {-3, 1}, {5, 5}, {-5, -5}, {-5, 5}, {5, -5}, {10, -10}, {-10, 10}, {-7, 9}, {7, -9}
+    };
 
     std::function<void(std::vector<Structures::Arrow<double>>, std::string)> runTestOnAllMethods {
         [&](std::vector<Structures::Arrow<double>> primeField, std::string fieldName) {

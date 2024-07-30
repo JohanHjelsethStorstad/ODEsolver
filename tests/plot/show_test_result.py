@@ -3,23 +3,23 @@ import os
 
 def show_test_result(name: str) -> None:
     arrows = []
-    trajectories = [] # List of tuples (tag, [(x, y)])
+    trajectories = {} # {tag: {start: [(x, y), ...]}}
     with open(f"store/{name}.txt") as file:
         for line in file:
             parts = line[line.find("(")+1:line.find(")")].split(",")
+            # Get tag in [...]
+            tag = line[line.find("[")+1:line.find("]")]
+
+            # Get start in {...}
+            start = line[line.find("{")+1:line.find("}")]
             if line.startswith("Arrow"):
                 arrows.append((float(parts[0]), float(parts[1]), float(parts[2]), float(parts[3])))
             elif line.startswith("Point"):
-                # Get tag in [...]
-                tag = line[line.find("[")+1:line.find("]")]
-                found = False
-                for tag_, trajectory in trajectories:
-                    if tag == tag_:
-                        trajectory.append((float(parts[0]), float(parts[1])))
-                        found = True
-                if not found:
-                    trajectories.append((tag, [(float(parts[0]), float(parts[1]))]))
-    print(len(trajectories))
+                if tag not in trajectories:
+                    trajectories[tag] = {}
+                if start not in trajectories[tag]:
+                    trajectories[tag][start] = []
+                trajectories[tag][start].append((float(parts[0]), float(parts[1])))
     arrows = arrows[::73]
     # Plot trajectory and arrows
     longest_length = 0
@@ -46,13 +46,11 @@ def show_test_result(name: str) -> None:
         
         ax.arrow(x, y, dx, dy, lw=1, head_width=0.1, head_length=0.1, color=color(length))
     LIM = 10
-    # Rmove all points outside of the range -LIM to LIM
-    trajectories = [(tag, [(x, y) for x, y in trajectory if -LIM < x < LIM and -LIM < y < LIM]) for tag, trajectory in trajectories]
-    for tag, trajectory in trajectories:
-        x = [point[0] for point in trajectory]
-        y = [point[1] for point in trajectory]
-        ax.plot(x, y, label=tag, linewidth=0.5)  # Draw thin lines between points
-        ax.scatter(x, y)  # Plot the points as well
+    for tag, starts in trajectories.items():
+        for start, trajectory in starts.items():
+            x, y = zip(*trajectory)
+            ax.plot(x, y, label=tag, linewidth=0.5)  # Draw thin lines between points
+            ax.scatter(x, y)  # Plot the points as well
     pos = ax.get_position()
     ax.set_position([pos.x0, pos.y0, pos.width * 0.9, pos.height])
     ax.legend(loc='center right', bbox_to_anchor=(1.25, 0.5))
