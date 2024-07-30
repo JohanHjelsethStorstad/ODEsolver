@@ -3,8 +3,8 @@
 
 std::vector<Structures::Arrow<double>> ODE::Tests::FieldGenerator::generateField() const {
     std::vector<Structures::Arrow<double>> field;
-    for (double x = 0; x < this->width; x += this->delta) {
-        for (double y = 0; y < this->height; y += this->delta) {
+    for (double x = this->window.startx; x < this->window.endx(); x += this->delta) {
+        for (double y = this->window.starty; y < this->window.endy(); y += this->delta) {
             field.push_back(this->generateArrowAtPoint({x, y}));
         }
     }
@@ -25,5 +25,5 @@ Structures::Arrow<double> ODE::Tests::FieldGeneratorRandom::generateArrowAtPoint
 
 Structures::Arrow<double> ODE::Tests::FieldGeneratorFunction::generateArrowAtPoint(Structures::Point<double> point) const {
     const Structures::Point<double> end_point = this->functions(point);
-    return { point, end_point };
+    return { point, point + end_point };
 }

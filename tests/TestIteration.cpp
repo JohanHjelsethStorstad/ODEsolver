@@ -1,37 +1,71 @@
 #include "TestIteration.h"
 #include "FieldGenerator.h"
-#include "Plot.h"
+#include "../src/Store.h"
 #include <memory>
 #include <vector>
 #include <iostream>
 
 void ODE::Tests::runTestSuite() {
-    static constexpr int iterations = 1000;
-    static constexpr double dt = 0.01;
+    const TestConfig config; //Default values
+    auto inferNearest = std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeNearest>(PrimeFieldInferation::PrimeFieldInferationSchemeNearest());
+    auto inferWeightedAverage = std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage>(PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage());
 
-    static constexpr double fieldDelta = 0.1;
-    static constexpr double width = 10;
-    static constexpr double height = 10;
-    static constexpr FieldGeneratorRandomBounds bounds = {0, 10};
+    auto Euler = std::make_shared<BucherTableau::ExplicitButcherTableau<1>>(BucherTableau::ExplicitButcherTableau<1>::Euler());
 
-    std::vector<Structures::Arrow<double>> primeField = FieldGeneratorRandom(fieldDelta, width, height, bounds).generateField();
-    std::cout << primeField << std::endl;
-    //Plot::plotArrows(primeField);
-    IterationScheme scheme = IterationScheme(
-        primeField,
-        std::make_shared<BucherTableau::ExplicitButcherTableau<1>>(BucherTableau::ExplicitButcherTableau<1>::Euler()),
-        std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeNearest>(PrimeFieldInferation::PrimeFieldInferationSchemeNearest())
-    );
+    std::vector<Structures::Arrow<double>> randomPrimeField = FieldGeneratorRandom(
+        config.fieldDelta, 
+        config.window,
+        config.bounds
+    ).generateField();
 
-    TestIteration testIteration = TestIteration(scheme, dt, iterations);
-    const std::vector<Structures::Point<double>> result = testIteration.test();
+    std::vector<Structures::Arrow<double>> functionPrimeField = FieldGeneratorFunction(
+        config.fieldDelta, 
+        config.window,
+        [](Structures::Point<double> point) -> Structures::Point<double> {
+            return {point.y, -point.x};
+        }
+    ).generateField();
 
-    Plot::show();
+    std::vector<Structures::Point<double>> test0 = TestIteration(IterationScheme(
+        randomPrimeField,
+        Euler,
+        inferWeightedAverage
+    ), config.dt, config.iterations).test();
+    storeTest("Euler Weighted Average Random", randomPrimeField, test0);
+
+    std::vector<Structures::Point<double>> test1 = TestIteration(IterationScheme(
+        randomPrimeField,
+        Euler,
+        inferNearest
+    ), config.dt, config.iterations).test();
+    storeTest("Euler Nearest Random", randomPrimeField, test1);
+
+    std::vector<Structures::Point<double>> test2 = TestIteration(IterationScheme(
+        functionPrimeField,
+        Euler,
+        inferWeightedAverage
+    ), config.dt, config.iterations).test();
+    storeTest("Euler Weighted Average Function (x, y) -> (y, -x)", functionPrimeField, test2);
+
+    std::vector<Structures::Point<double>> test3 = TestIteration(IterationScheme(
+        functionPrimeField,
+        Euler,
+        inferNearest
+    ), config.dt, config.iterations).test();
+    storeTest("Euler Nearest Function (x, y) -> (y, -x)", functionPrimeField, test3);
+}
+
+void ODE::Tests::storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<Structures::Point<double>> result) {
+    Store::Store store (name);
+    store.write("Prime field");
+    store.store(primeField);
+    store.write("Trajectory");
+    store.store(result);
 }
 
 std::vector<Structures::Point<double>> ODE::Tests::TestIteration::test() {
     std::vector<Structures::Point<double>> points;
-    Structures::Point<double> point = {0, 0};
+    Structures::Point<double> point = {1.5, 1.5};
     for (int i = 0; i < this->iterations; i++) {
         point = this->scheme.step(point, this->dt);
         points.push_back(point);

@@ -3,6 +3,9 @@
 
 .vscode
 
+# Saved computations
+store
+
 # Compiled Object files
 *.slo
 *.lo

@@ -4,13 +4,21 @@
 #include <functional>
 
 namespace ODE::Tests {
+    struct FieldGeneratorWindow {
+        double width;
+        double height;
+        double startx;
+        double starty;
+        double endx() const { return startx + width; }
+        double endy() const { return starty + height; }
+    };
+
     class FieldGenerator {
     private:
         double delta;
-        double width;
-        double height;
+        FieldGeneratorWindow window;
     public:
-        FieldGenerator(double delta, double width, double height) : delta{delta}, width{width}, height{height} {}
+        FieldGenerator(double delta, FieldGeneratorWindow window) : delta{delta}, window{window} {}
         virtual Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const = 0;
         std::vector<Structures::Arrow<double>> generateField() const;
     };
@@ -25,7 +33,7 @@ namespace ODE::Tests {
         FieldGeneratorRandomBounds bounds;
         double randomDouble() const;
     public:
-        FieldGeneratorRandom(double delta, double width, double height, FieldGeneratorRandomBounds bounds) : FieldGenerator(delta, width, height), bounds(bounds) {}
+        FieldGeneratorRandom(double delta, FieldGeneratorWindow window, FieldGeneratorRandomBounds bounds) : FieldGenerator(delta, window), bounds(bounds) {}
         Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const override;
     };
 
@@ -33,7 +41,7 @@ namespace ODE::Tests {
     private:
         std::function<Structures::Point<double>(Structures::Point<double>)> functions;
     public:
-        FieldGeneratorFunction(double delta, double width, double height, std::function<Structures::Point<double>(Structures::Point<double>)> functions) : FieldGenerator(delta, width, height), functions(functions) {}
+        FieldGeneratorFunction(double delta, FieldGeneratorWindow window, std::function<Structures::Point<double>(Structures::Point<double>)> functions) : FieldGenerator(delta, window), functions(functions) {}
         Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const override;
     };
 }

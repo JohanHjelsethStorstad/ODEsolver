@@ -6,7 +6,8 @@ void ODE::Tests::Plot::plotArrows(const std::vector<Structures::Arrow<double>>& 
 }
 
 void ODE::Tests::Plot::plotArrow(const Structures::Arrow<double>& arrow) {
-    matplotlibcpp::arrow(arrow.start.x, arrow.start.y, arrow.end.x, arrow.end.y);
+    std::cout << arrow << std::endl;
+    matplotlibcpp::arrow(arrow.start.x, arrow.start.y, arrow.end.x, arrow.end.y); //ERROR: SOMETHING CAUSES SEGV
 }
 
 void ODE::Tests::Plot::plotPoints(const std::vector<Structures::Point<double>>& points) {
