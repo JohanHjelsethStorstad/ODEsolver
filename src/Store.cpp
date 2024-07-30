@@ -10,24 +10,24 @@ void Store::Store::write(const std::string& data) {
     file << data << "\n";
 }
 
-void Store::Store::store(std::vector<Structures::Arrow<double>> arrows) {
+void Store::Store::store(std::vector<Structures::Arrow<double>> arrows, const std::string& tag) {
     for (const auto& arrow : arrows) {
-        store(arrow);
+        store(arrow, tag);
         file << std::endl;
     }
 }
 
-void Store::Store::store(Structures::Arrow<double> arrow) {
-    file << "Arrow" << "(" << arrow.start.x << "," << arrow.start.y << "," << arrow.end.x << "," << arrow.end.y << ")\n";
+void Store::Store::store(Structures::Arrow<double> arrow, const std::string& tag) {
+    file << "Arrow" << "[" << tag << "]" << "(" << arrow.start.x << "," << arrow.start.y << "," << arrow.end.x << "," << arrow.end.y << ")\n";
 }
 
-void Store::Store::store(std::vector<Structures::Point<double>> points) {
+void Store::Store::store(std::vector<Structures::Point<double>> points, const std::string& tag) {
     for (const auto& point : points) {
-        store(point);
+        store(point, tag);
         file << std::endl;
     }
 }
 
-void Store::Store::store(Structures::Point<double> point) {
-    file << "Point" << "(" << point.x << "," << point.y << ")\n";
+void Store::Store::store(Structures::Point<double> point, const std::string& tag) {
+    file << "Point" << "[" << tag << "]" << "(" << point.x << "," << point.y << ")\n";
 }

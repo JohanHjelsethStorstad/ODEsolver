@@ -4,7 +4,6 @@ import os
 def show_test_result(name: str) -> None:
     arrows = []
     points_in_trajectory = []
-    print(arrows)
     with open(f"store/{name}.txt") as file:
         for line in file:
             parts = line[line.find("(")+1:line.find(")")].split(",")
@@ -37,7 +36,7 @@ def show_test_result(name: str) -> None:
         
         plt.arrow(x, y, dx, dy, lw=1, head_width=0.1, head_length=0.1, color=color(length))
     for point in points_in_trajectory:
-        plt.plot(point[0], point[1], 'ro')
+        plt.plot(point[0], point[1], 'ro', markersize=0.1)
     plt.savefig(f"store/{name}.png")
     plt.clf()
 

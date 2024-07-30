@@ -18,11 +18,19 @@ void ODE::Tests::runTestSuite() {
         config.bounds
     ).generateField();
 
-    std::vector<Structures::Arrow<double>> functionPrimeField = FieldGeneratorFunction(
+    std::vector<Structures::Arrow<double>> function1PrimeField = FieldGeneratorFunction(
         config.fieldDelta, 
         config.window,
         [](Structures::Point<double> point) -> Structures::Point<double> {
             return {point.y, -point.x};
+        }
+    ).generateField();
+
+    std::vector<Structures::Arrow<double>> function2PrimeField = FieldGeneratorFunction(
+        config.fieldDelta, 
+        config.window,
+        [](Structures::Point<double> point) -> Structures::Point<double> {
+            return {point.x + 2*point.y, point.x + point.y};
         }
     ).generateField();
 
@@ -41,26 +49,28 @@ void ODE::Tests::runTestSuite() {
     storeTest("Euler Nearest Random", randomPrimeField, test1);
 
     std::vector<Structures::Point<double>> test2 = TestIteration(IterationScheme(
-        functionPrimeField,
+        function1PrimeField,
         Euler,
         inferWeightedAverage
     ), config.dt, config.iterations).test();
-    storeTest("Euler Weighted Average Function (x, y) -> (y, -x)", functionPrimeField, test2);
+    storeTest("Euler Weighted Average Function (x, y) -> (y, -x)", function1PrimeField, test2);
 
     std::vector<Structures::Point<double>> test3 = TestIteration(IterationScheme(
-        functionPrimeField,
+        function1PrimeField,
         Euler,
         inferNearest
     ), config.dt, config.iterations).test();
-    storeTest("Euler Nearest Function (x, y) -> (y, -x)", functionPrimeField, test3);
+    storeTest("Euler Nearest Function (x, y) -> (y, -x)", function1PrimeField, test3);
 }
 
-void ODE::Tests::storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<Structures::Point<double>> result) {
+void ODE::Tests::storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<std::vector<Structures::Point<double>>> trajectories) {
     Store::Store store (name);
     store.write("Prime field");
     store.store(primeField);
-    store.write("Trajectory");
-    store.store(result);
+    store.write("Trajectory 1");
+    for (const auto& trajectory : trajectories) {
+        store.store(trajectory);
+    }
 }
 
 std::vector<Structures::Point<double>> ODE::Tests::TestIteration::test() {
