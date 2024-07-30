@@ -3,14 +3,23 @@ import os
 
 def show_test_result(name: str) -> None:
     arrows = []
-    points_in_trajectory = []
+    trajectories = [] # List of tuples (tag, [(x, y)])
     with open(f"store/{name}.txt") as file:
         for line in file:
             parts = line[line.find("(")+1:line.find(")")].split(",")
             if line.startswith("Arrow"):
                 arrows.append((float(parts[0]), float(parts[1]), float(parts[2]), float(parts[3])))
             elif line.startswith("Point"):
-                points_in_trajectory.append((float(parts[0]), float(parts[1])))
+                # Get tag in [...]
+                tag = line[line.find("[")+1:line.find("]")]
+                found = False
+                for tag_, trajectory in trajectories:
+                    if tag == tag_:
+                        trajectory.append((float(parts[0]), float(parts[1])))
+                        found = True
+                if not found:
+                    trajectories.append((tag, [(float(parts[0]), float(parts[1]))]))
+    print(len(trajectories))
     arrows = arrows[::73]
     # Plot trajectory and arrows
     longest_length = 0
@@ -21,6 +30,7 @@ def show_test_result(name: str) -> None:
         if length > longest_length:
             longest_length = length
 
+    fig, ax = plt.subplots(figsize=(16, 10))
     for arrow in arrows:
         x = arrow[0]
         y = arrow[1]
@@ -34,11 +44,23 @@ def show_test_result(name: str) -> None:
         amount_of_blue = int(255 * (length / longest_length))
         color = lambda length: f"#{amount_of_red:02X}00{amount_of_blue:02X}"
         
-        plt.arrow(x, y, dx, dy, lw=1, head_width=0.1, head_length=0.1, color=color(length))
-    for point in points_in_trajectory:
-        plt.plot(point[0], point[1], 'ro', markersize=0.1)
+        ax.arrow(x, y, dx, dy, lw=1, head_width=0.1, head_length=0.1, color=color(length))
+    LIM = 10
+    # Rmove all points outside of the range -LIM to LIM
+    trajectories = [(tag, [(x, y) for x, y in trajectory if -LIM < x < LIM and -LIM < y < LIM]) for tag, trajectory in trajectories]
+    for tag, trajectory in trajectories:
+        x = [point[0] for point in trajectory]
+        y = [point[1] for point in trajectory]
+        ax.plot(x, y, label=tag, linewidth=0.5)  # Draw thin lines between points
+        ax.scatter(x, y)  # Plot the points as well
+    pos = ax.get_position()
+    ax.set_position([pos.x0, pos.y0, pos.width * 0.9, pos.height])
+    ax.legend(loc='center right', bbox_to_anchor=(1.25, 0.5))
+    plt.xlim(-LIM, LIM)
+    plt.ylim(-LIM, LIM)
     plt.savefig(f"store/{name}.png")
     plt.clf()
+    plt.close(fig)
 
 if __name__ == "__main__":
     # Loop throuh all .txt files in store folder
