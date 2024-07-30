@@ -1,5 +1,5 @@
 #pragma once
-#include "Structures.h"
+#include "structures/Point.h"
 #include <vector>
 
 namespace ODE {

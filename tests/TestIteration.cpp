@@ -52,6 +52,9 @@ void ODE::Tests::runTestSuite() {
         config.window,
         [](Structures::Point<double> point) {
             return Structures::Point<double> {point.y, -point.x};
+        },
+        [](double t) {
+            return Structures::Point<double> {0, 0};
         }
     ).generateField();
 
@@ -62,6 +65,9 @@ void ODE::Tests::runTestSuite() {
         config.window,
         [](Structures::Point<double> point) {
             return Structures::Point<double> {2*point.y + point.x, point.x + 3*point.y};
+        },
+        [](double t) {
+            return Structures::Point<double> {0, 0};
         }
     ).generateField();
 
@@ -72,6 +78,9 @@ void ODE::Tests::runTestSuite() {
         config.window,
         [](Structures::Point<double> point) {
             return Structures::Point<double> {point.y, point.x};
+        },
+        [](double t) {
+            return Structures::Point<double> {0, 0};
         }
     ).generateField();
 

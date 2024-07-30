@@ -1,8 +1,10 @@
 #pragma once
 #include <functional>
-#include "Structures.h"
+#include "structures/Point.h"
 
 namespace ODE::DynamicalSystem {
+
+
     class DynamicalSystem {
     
     }; 

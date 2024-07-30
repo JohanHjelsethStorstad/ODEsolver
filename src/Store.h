@@ -1,5 +1,6 @@
 #pragma once
-#include "Structures.h"
+#include "structures/Arrow.h"
+#include "structures/Point.h"
 #include <vector>
 #include <fstream>
 #include <string>

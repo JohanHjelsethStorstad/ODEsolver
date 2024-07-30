@@ -1,6 +1,7 @@
 #pragma once
 #include "../src/IterationScheme.h"
-#include "../src/Structures.h"
+#include "../src/structures/Point.h"
+#include "../src/structures/Arrow.h"
 #include "FieldGenerator.h"
 #include <vector>
 #include <string>

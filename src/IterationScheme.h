@@ -1,5 +1,6 @@
 #pragma once
-#include "Structures.h"
+#include "structures/Point.h"
+#include "structures/Arrow.h"
 #include "ButcherTableau.h"
 #include "PrimeFieldInferation.h"
 #include <vector>

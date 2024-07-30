@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
-#include "Structures.h"
+#include "structures/Arrow.h"
+#include "structures/Point.h"
 
 namespace ODE::PrimeFieldInferation {
     class PrimeFieldInferationScheme {

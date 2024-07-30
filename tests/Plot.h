@@ -1,6 +1,7 @@
 #pragma once
 #include "../lib/matplotlib-cpp/matplotlibcpp.h"
-#include "../src/Structures.h"
+#include "../src/structures/Arrow.h"
+#include "../src/structures/Point.h"
 
 namespace ODE::Tests {
     class Plot {
