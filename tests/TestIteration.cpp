@@ -14,22 +14,24 @@ void ODE::Tests::runTestSuite() {
     auto RK4 = std::make_shared<BucherTableau::ExplicitButcherTableau<4>>(BucherTableau::ExplicitButcherTableau<4>::RungeKutta4());
     auto RK3 = std::make_shared<BucherTableau::ExplicitButcherTableau<4>>(BucherTableau::ExplicitButcherTableau<4>::RungeKutta3());
     auto Heun = std::make_shared<BucherTableau::ExplicitButcherTableau<2>>(BucherTableau::ExplicitButcherTableau<2>::Heun());
+    std::vector<std::shared_ptr<BucherTableau::IButcherTableau>> schemes = {Euler, RK4, RK3, Heun};
+
+    std::vector<Structures::Point<double>> startPoints = {{1.5, 1.5}, {-1.5, -1.5}, {3, 1}, {-3, 1}};
 
     std::function<void(std::vector<Structures::Arrow<double>>, std::string)> runTestOnAllMethods {
         [&](std::vector<Structures::Arrow<double>> primeField, std::string fieldName) {
-            std::vector<std::pair<std::vector<Structures::Point<double>>, std::string>> trajectories;
-            std::vector<std::shared_ptr<BucherTableau::IButcherTableau>> schemes = {Euler, RK4, RK3, Heun};
+            std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories;
             for (const auto& scheme : schemes) {
                 trajectories.push_back({TestIteration(IterationScheme(
                     primeField,
                     scheme,
                     inferWeightedAverage
-                ), config.dt, config.iterations).test(), scheme->getName() + " Weighted Average"});
+                ), config.dt, config.iterations).test(startPoints), scheme->getName() + " Weighted Average"});
                 trajectories.push_back({TestIteration(IterationScheme(
                     primeField,
                     scheme,
                     inferNearest
-                ), config.dt, config.iterations).test(), scheme->getName() + " Nearest"});
+                ), config.dt, config.iterations).test(startPoints), scheme->getName() + " Nearest"});
             }
             storeTest(fieldName, primeField, trajectories);
         }
@@ -62,9 +64,23 @@ void ODE::Tests::runTestSuite() {
     ).generateField();
 
     runTestOnAllMethods(functionPrimeField2, "Function (x, y) -> (2y + x, x + 3y)");
+
+    std::vector<Structures::Arrow<double>> functionPrimeField3 = FieldGeneratorFunction(
+        config.fieldDelta,
+        config.window,
+        [](Structures::Point<double> point) {
+            return Structures::Point<double> {point.y, point.x};
+        }
+    ).generateField();
+
+    runTestOnAllMethods(functionPrimeField3, "Function (x, y) -> (y, x)");
 }
 
-void ODE::Tests::storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<std::pair<std::vector<Structures::Point<double>>, std::string>> trajectories) {
+void ODE::Tests::storeTest(
+    std::string name, 
+    std::vector<Structures::Arrow<double>> primeField,
+    std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories
+) {
     Store::Store store (name);
     store.write("Prime field");
     store.store(primeField, "Prime");
@@ -74,12 +90,16 @@ void ODE::Tests::storeTest(std::string name, std::vector<Structures::Arrow<doubl
     }
 }
 
-std::vector<Structures::Point<double>> ODE::Tests::TestIteration::test() {
-    std::vector<Structures::Point<double>> points;
-    Structures::Point<double> point = {1.5, 1.5};
-    for (int i = 0; i < this->iterations; i++) {
-        point = this->scheme.step(point, this->dt);
-        points.push_back(point);
-    }
-    return points;
+std::vector<ODE::Trajectory> ODE::Tests::TestIteration::test(std::vector<Structures::Point<double>> startPoints) {
+    std::vector<Trajectory> trajectories;
+    for (const auto& startPoint : startPoints) {
+        Trajectory trajectory = Trajectory(startPoint);
+        Structures::Point<double> point = startPoint;
+        for (int i = 0; i < this->iterations; i++) {
+            point = this->scheme.step(point, this->dt);
+            trajectory.addPoint(point);
+        }
+        trajectories.push_back(trajectory);
+    }  
+    return trajectories;
 }

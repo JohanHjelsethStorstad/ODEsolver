@@ -31,3 +31,17 @@ void Store::Store::store(std::vector<Structures::Point<double>> points, const st
 void Store::Store::store(Structures::Point<double> point, const std::string& tag) {
     file << "Point" << "[" << tag << "]" << "(" << point.x << "," << point.y << ")\n";
 }
+
+void Store::Store::store(std::vector<ODE::Trajectory> trajectories, const std::string& tag) {
+    for (const auto& trajectory : trajectories) {
+        store(trajectory, tag);
+        file << std::endl;
+    }
+}
+    
+void Store::Store::store(ODE::Trajectory trajectory, const std::string& tag) {;
+    Structures::Point<double> start = trajectory.getStart();
+    for (const auto& point : trajectory.getPoints()) {
+        file << "Point" << "[" << tag << "]" << "{" << start.x << start.y << "}" << "(" << point.x << "," << point.y << ")\n";
+    }
+}

@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include "Trajectory.h"
 
 namespace Store {
     class Store {
@@ -16,6 +17,8 @@ namespace Store {
         void store(Structures::Arrow<double> arrow, const std::string& tag);
         void store(std::vector<Structures::Point<double>> points, const std::string& tag);
         void store(Structures::Point<double> point, const std::string& tag);
+        void store(std::vector<ODE::Trajectory> trajectories, const std::string& tag);
+        void store(ODE::Trajectory trajectory, const std::string& tag);
         void write(const std::string& data);
     };
 };
