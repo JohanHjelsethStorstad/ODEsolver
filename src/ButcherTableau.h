@@ -16,7 +16,9 @@ namespace ODE::BucherTableau {
 		inline void setName(const std::string& name) {
 			this->name = name;
 		}
-		
+		inline std::string getName() const {
+			return this->name;
+		}
 	};
 
 	template<int order>

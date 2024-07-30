@@ -7,7 +7,7 @@
 
 namespace ODE::Tests {
     void runTestSuite();
-    void storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<Structures::Point<double>> result);
+    void storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<std::pair<std::vector<Structures::Point<double>>, std::string>> trajectories);
 
     struct TestConfig {
         static constexpr int iterations = 1000;
