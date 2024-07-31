@@ -41,14 +41,12 @@ namespace ODE::Tests {
     class FieldGeneratorFunction : public FieldGenerator {
     private:
         std::function<Structures::Point<double>(Structures::Point<double>)> functions;
-        std::function<Structures::Point<double>(double)> exactSolution;
     public:
         FieldGeneratorFunction(
             double delta, 
             FieldGeneratorWindow window, 
-            std::function<Structures::Point<double>(Structures::Point<double>)> functions,
-            std::function<Structures::Point<double>(double)> exactSolution
-        ) : FieldGenerator(delta, window), functions(functions), exactSolution(exactSolution) {}
+            std::function<Structures::Point<double>(Structures::Point<double>)> functions
+        ) : FieldGenerator(delta, window), functions(functions) {}
         Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const override;
     };
 }

@@ -1,9 +1,31 @@
 #include "TestIteration.h"
 #include "FieldGenerator.h"
 #include "../src/Store.h"
+#include "../src/DynamicalSystem.h"
 #include <memory>
 #include <vector>
 #include <iostream>
+
+std::function<void(std::vector<Structures::Arrow<double>>, std::string)> ODE::Tests::getRunner(
+    const std::vector<std::shared_ptr<BucherTableau::IButcherTableau>>& schemes,
+    const std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>>& inferationSchemes,
+    const std::vector<Structures::Point<double>>& startPoints,
+    const TestConfig& config
+) {
+    return [&](std::vector<Structures::Arrow<double>> primeField, std::string fieldName) {
+        std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories;
+        for (const auto& scheme : schemes) {
+            for (const auto& inferationScheme : inferationSchemes) {
+                trajectories.push_back({TestIteration(IterationScheme(
+                    primeField,
+                    scheme,
+                    inferationScheme
+                ), config.dt, config.iterations).test(startPoints), scheme->getName() + " " + inferationScheme->getName()});
+            }
+        }
+        storeTest(fieldName, primeField, trajectories);
+    };
+}
 
 void ODE::Tests::runTestSuite() {
     const TestConfig config; //Default values
@@ -14,30 +36,14 @@ void ODE::Tests::runTestSuite() {
     auto RK4 = std::make_shared<BucherTableau::ExplicitButcherTableau<4>>(BucherTableau::ExplicitButcherTableau<4>::RungeKutta4());
     auto RK3 = std::make_shared<BucherTableau::ExplicitButcherTableau<4>>(BucherTableau::ExplicitButcherTableau<4>::RungeKutta3());
     auto Heun = std::make_shared<BucherTableau::ExplicitButcherTableau<2>>(BucherTableau::ExplicitButcherTableau<2>::Heun());
+    
     std::vector<std::shared_ptr<BucherTableau::IButcherTableau>> schemes = {Euler, RK4, RK3, Heun};
-
+    std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>> inferationSchemes = {inferNearest, inferWeightedAverage};
     const std::vector<Structures::Point<double>> startPoints = {
         {1.5, 1.5}, {-1.5, -1.5}, {3, 1}, {-3, 1}, {5, 5}, {-5, -5}, {-5, 5}, {5, -5}, {10, -10}, {-10, 10}, {-7, 9}, {7, -9}
     };
 
-    std::function<void(std::vector<Structures::Arrow<double>>, std::string)> runTestOnAllMethods {
-        [&](std::vector<Structures::Arrow<double>> primeField, std::string fieldName) {
-            std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories;
-            for (const auto& scheme : schemes) {
-                trajectories.push_back({TestIteration(IterationScheme(
-                    primeField,
-                    scheme,
-                    inferWeightedAverage
-                ), config.dt, config.iterations).test(startPoints), scheme->getName() + " Weighted Average"});
-                trajectories.push_back({TestIteration(IterationScheme(
-                    primeField,
-                    scheme,
-                    inferNearest
-                ), config.dt, config.iterations).test(startPoints), scheme->getName() + " Nearest"});
-            }
-            storeTest(fieldName, primeField, trajectories);
-        }
-    };
+    std::function<void(std::vector<Structures::Arrow<double>>, std::string)> runTestOnAllMethods = getRunner(schemes, inferationSchemes, startPoints, config);
 
     std::vector<Structures::Arrow<double>> randomPrimeField = FieldGeneratorRandom(
         config.fieldDelta, 
@@ -52,9 +58,6 @@ void ODE::Tests::runTestSuite() {
         config.window,
         [](Structures::Point<double> point) {
             return Structures::Point<double> {point.y, -point.x};
-        },
-        [](double t) {
-            return Structures::Point<double> {0, 0};
         }
     ).generateField();
 
@@ -65,9 +68,6 @@ void ODE::Tests::runTestSuite() {
         config.window,
         [](Structures::Point<double> point) {
             return Structures::Point<double> {2*point.y + point.x, point.x + 3*point.y};
-        },
-        [](double t) {
-            return Structures::Point<double> {0, 0};
         }
     ).generateField();
 
@@ -78,9 +78,6 @@ void ODE::Tests::runTestSuite() {
         config.window,
         [](Structures::Point<double> point) {
             return Structures::Point<double> {point.y, point.x};
-        },
-        [](double t) {
-            return Structures::Point<double> {0, 0};
         }
     ).generateField();
 

@@ -5,20 +5,18 @@
 #include "FieldGenerator.h"
 #include <vector>
 #include <string>
+#include <functional>
 #include "../src/Trajectory.h"
 
 namespace ODE::Tests {
-    void runTestSuite();
-    void storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories);
-
     struct TestConfig {
-        static constexpr int iterations = 1000;
-        static constexpr double dt = 0.2;
+        int iterations = 1000;
+        double dt = 0.2;
 
-        static constexpr double fieldDelta = 0.1;
-        static constexpr FieldGeneratorWindow window = {20, 20, -10, -10};
+        double fieldDelta = 0.1;
+        FieldGeneratorWindow window = {20, 20, -10, -10};
 
-        static constexpr FieldGeneratorRandomBounds bounds = {-10, 10};
+        FieldGeneratorRandomBounds bounds = {-10, 10};
     };
 
     class TestIteration {
@@ -30,4 +28,13 @@ namespace ODE::Tests {
         TestIteration(IterationScheme scheme, double dt, int iterations) : scheme(scheme), dt(dt), iterations(iterations) {}
         std::vector<Trajectory> test(std::vector<Structures::Point<double>> startPoints = {{1.5, 1.5}});
     };
+
+    void runTestSuite();
+    std::function<void(std::vector<Structures::Arrow<double>>, std::string)> getRunner(
+        const std::vector<std::shared_ptr<BucherTableau::IButcherTableau>>& schemes,
+        const std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>>& inferationSchemes,
+        const std::vector<Structures::Point<double>>& startPoints,
+        const TestConfig& config
+    );
+    void storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories);
 }
