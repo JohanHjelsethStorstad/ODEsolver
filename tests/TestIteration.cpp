@@ -61,6 +61,15 @@ void ODE::Tests::runTestSuite() {
         }
     ).generateField();
 
+    DynamicalSystem::DynamicalSystemKnownSoulution knownSoulution1 = DynamicalSystem::DynamicalSystemKnownSoulution(
+        [](Structures::Point<double> start, double t) {
+            return Structures::Point<double> {
+                start.y * std::sin(t) + start.x * std::cos(t),
+                -start.x * std::sin(t) + start.y * std::cos(t)
+            };
+        }
+    );
+
     runTestOnAllMethods(functionPrimeField1, "Function (x, y) -> (y, -x)");
 
     std::vector<Structures::Arrow<double>> functionPrimeField2 = FieldGeneratorFunction(
