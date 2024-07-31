@@ -4,8 +4,17 @@
 
 /**
  * @brief Runs the tests for the iteration scheme.
+ * @param argc Number of command-line arguments.
+ * @param argv Array of command-line arguments.
  */
-int main() {
-    ODE::Tests::runTestSuite();
+int main(int argc, char* argv[]) {
+    if (argc == 1) {
+        throw std::invalid_argument("No arguments provided. Must be test, ...");   
+    }
+    if (argv[1] == std::string("test")) {
+        ODE::Tests::runTestSuite();
+    } else {
+        throw std::invalid_argument("Invalid argument provided.");
+    }
     return 0;
 }
