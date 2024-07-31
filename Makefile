@@ -1,5 +1,5 @@
 # Source files
-SRCS = src/main.cpp src/IterationScheme.cpp src/Logger.cpp src/PrimeFieldInferation.cpp src/Store.cpp tests/FieldGenerator.cpp tests/TestIteration.cpp tests/Plot.cpp
+SRCS = src/main.cpp src/IterationScheme.cpp src/Logger.cpp src/PrimeFieldInferation.cpp src/Store.cpp tests/FieldGenerator.cpp tests/TestIteration.cpp tests/Plot.cpp tests/TestConfig.cpp
 
 # Object files directory
 OBJDIR = build
@@ -13,7 +13,7 @@ EXEC = $(OBJDIR)/ODESolver
 # Compiler flags
 NUMPY_INCLUDE = $(shell python3 -c "import numpy; print(numpy.get_include())")
 PYTHON_INCLUDE = $(shell python3-config --includes)
-CXXFLAGS = -Wall -Wextra -O2 $(PYTHON_INCLUDE) -I $(NUMPY_INCLUDE) -I lib/matplotlib-cpp
+CXXFLAGS = -Wall -Wextra -O2 $(PYTHON_INCLUDE) -I $(NUMPY_INCLUDE) -I lib/matplotlib-cpp -I lib/json/single_include
 
 # Linker flags
 PYTHON_LIBS = $(shell python3-config --ldflags)

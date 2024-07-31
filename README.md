@@ -21,7 +21,8 @@ Also add a .vscode c_cpp_properties.json for intelliSense: example:
             "name": "Linux",
             "includePath": [
                 "/usr/include/python3.10", //python interpriter path for Python.h
-                "/home/johanstorstad/.local/lib/python3.10/site-packages/numpy/_core/include" // numpy path
+                "/home/johanstorstad/.local/lib/python3.10/site-packages/numpy/_core/include", // numpy path
+                "/home/johanstorstad/ODEsolver/lib/json/single_include" //easy include of json
             ],
             "intelliSenseMode": "linux-gcc-x64",
             "compilerPath": "/usr/bin/gcc",
