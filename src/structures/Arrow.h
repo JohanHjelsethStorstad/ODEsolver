@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include "Point.h"
 
 namespace Structures {
 	enum class WHERE_ON_ARROW {
