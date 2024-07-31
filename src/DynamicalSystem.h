@@ -14,6 +14,9 @@ namespace ODE::DynamicalSystem {
                 return this->soulution(start, t);
             };
         }
+        DynamicalSystem() = default;
+        DynamicalSystem(const DynamicalSystem& other) = default;
+        DynamicalSystem& operator=(const DynamicalSystem& other) = default;
     }; 
 
     /**

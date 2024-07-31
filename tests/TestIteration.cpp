@@ -6,25 +6,22 @@
 #include <vector>
 #include <iostream>
 
-std::function<void(std::vector<Structures::Arrow<double>>, std::string)> ODE::Tests::getRunner(
-    const std::vector<std::shared_ptr<BucherTableau::IButcherTableau>>& schemes,
-    const std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>>& inferationSchemes,
-    const std::vector<Structures::Point<double>>& startPoints,
-    const TestConfig& config
+void ODE::Tests::FieldRunner::run(
+    std::vector<Structures::Arrow<double>> primeField, 
+    std::string fieldName, 
+    const std::optional<std::shared_ptr<ODE::DynamicalSystem::DynamicalSystem>>& knownSolution
 ) {
-    return [&](std::vector<Structures::Arrow<double>> primeField, std::string fieldName) {
-        std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories;
-        for (const auto& scheme : schemes) {
-            for (const auto& inferationScheme : inferationSchemes) {
-                trajectories.push_back({TestIteration(IterationScheme(
-                    primeField,
-                    scheme,
-                    inferationScheme
-                ), config.dt, config.iterations).test(startPoints), scheme->getName() + " " + inferationScheme->getName()});
-            }
+    std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories;
+    for (const auto& scheme : schemes) {
+        for (const auto& inferationScheme : inferationSchemes) {
+            trajectories.push_back({TestIteration(IterationScheme(
+                primeField,
+                scheme,
+                inferationScheme
+            ), config.dt, config.iterations).test(startPoints), scheme->getName() + " " + inferationScheme->getName()});
         }
-        storeTest(fieldName, primeField, trajectories);
-    };
+    }
+    storeTest(fieldName, primeField, trajectories);
 }
 
 void ODE::Tests::runTestSuite() {
@@ -43,7 +40,7 @@ void ODE::Tests::runTestSuite() {
         {1.5, 1.5}, {-1.5, -1.5}, {3, 1}, {-3, 1}, {5, 5}, {-5, -5}, {-5, 5}, {5, -5}, {10, -10}, {-10, 10}, {-7, 9}, {7, -9}
     };
 
-    std::function<void(std::vector<Structures::Arrow<double>>, std::string)> runTestOnAllMethods = getRunner(schemes, inferationSchemes, startPoints, config);
+    FieldRunner fieldRunner = FieldRunner(schemes, inferationSchemes, startPoints, config);
 
     std::vector<Structures::Arrow<double>> randomPrimeField = FieldGeneratorRandom(
         config.fieldDelta, 
@@ -51,7 +48,7 @@ void ODE::Tests::runTestSuite() {
         config.bounds
     ).generateField();
 
-    runTestOnAllMethods(randomPrimeField, "Random");
+    fieldRunner.run(randomPrimeField, "Random", std::nullopt);
 
     std::vector<Structures::Arrow<double>> functionPrimeField1 = FieldGeneratorFunction(
         config.fieldDelta,
@@ -61,7 +58,7 @@ void ODE::Tests::runTestSuite() {
         }
     ).generateField();
 
-    DynamicalSystem::DynamicalSystemKnownSoulution knownSoulution1 = DynamicalSystem::DynamicalSystemKnownSoulution(
+    std::shared_ptr<DynamicalSystem::DynamicalSystemKnownSoulution> knownSoulution1 = std::make_shared<DynamicalSystem::DynamicalSystemKnownSoulution>(
         [](Structures::Point<double> start, double t) {
             return Structures::Point<double> {
                 start.y * std::sin(t) + start.x * std::cos(t),
@@ -70,7 +67,7 @@ void ODE::Tests::runTestSuite() {
         }
     );
 
-    runTestOnAllMethods(functionPrimeField1, "Function (x, y) -> (y, -x)");
+    fieldRunner.run(functionPrimeField1, "Function (x, y) -> (y, -x)", knownSoulution1);
 
     std::vector<Structures::Arrow<double>> functionPrimeField2 = FieldGeneratorFunction(
         config.fieldDelta,
@@ -80,7 +77,7 @@ void ODE::Tests::runTestSuite() {
         }
     ).generateField();
 
-    runTestOnAllMethods(functionPrimeField2, "Function (x, y) -> (2y + x, x + 3y)");
+    fieldRunner.run(functionPrimeField2, "Function (x, y) -> (2y + x, x + 3y)", std::nullopt);
 
     std::vector<Structures::Arrow<double>> functionPrimeField3 = FieldGeneratorFunction(
         config.fieldDelta,
@@ -90,7 +87,7 @@ void ODE::Tests::runTestSuite() {
         }
     ).generateField();
 
-    runTestOnAllMethods(functionPrimeField3, "Function (x, y) -> (y, x)");
+    fieldRunner.run(functionPrimeField3, "Function (x, y) -> (y, x)", std::nullopt);
 }
 
 void ODE::Tests::storeTest(

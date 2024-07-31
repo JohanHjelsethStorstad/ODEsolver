@@ -6,7 +6,9 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <optional>
 #include "../src/Trajectory.h"
+#include "../src/DynamicalSystem.h"
 
 namespace ODE::Tests {
     struct TestConfig {
@@ -30,11 +32,26 @@ namespace ODE::Tests {
     };
 
     void runTestSuite();
-    std::function<void(std::vector<Structures::Arrow<double>>, std::string)> getRunner(
-        const std::vector<std::shared_ptr<BucherTableau::IButcherTableau>>& schemes,
-        const std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>>& inferationSchemes,
-        const std::vector<Structures::Point<double>>& startPoints,
-        const TestConfig& config
-    );
     void storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories);
+
+    class FieldRunner {
+    private:
+        std::vector<std::shared_ptr<BucherTableau::IButcherTableau>> schemes;
+        std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>> inferationSchemes;
+        std::vector<Structures::Point<double>> startPoints;
+        TestConfig config;
+    public:
+        FieldRunner(
+            const std::vector<std::shared_ptr<BucherTableau::IButcherTableau>>& schemes,
+            const std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>>& inferationSchemes,
+            const std::vector<Structures::Point<double>>& startPoints,
+            const TestConfig& config
+        ) : schemes(schemes), inferationSchemes(inferationSchemes), startPoints(startPoints), config(config) {}
+
+        void run(
+            std::vector<Structures::Arrow<double>> primeField, 
+            std::string fieldName,
+            const std::optional<std::shared_ptr<ODE::DynamicalSystem::DynamicalSystem>>& knownSolution
+        );
+    };
 }
