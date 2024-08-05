@@ -5,6 +5,7 @@
 
 # Saved computations
 store
+fields
 
 # Compiled Object files
 *.slo

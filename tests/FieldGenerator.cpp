@@ -1,7 +1,9 @@
 #include "FieldGenerator.h"
 #include <random>
+#include <nlohmann/json.hpp>
+#include <fstream>
 
-std::vector<Structures::Arrow<double>> ODE::Tests::FieldGenerator::generateField() const {
+std::vector<Structures::Arrow<double>> ODE::Tests::FieldGeneratorFixedWindow::generateField() const {
     std::vector<Structures::Arrow<double>> field;
     for (double x = this->window.startx; x < this->window.endx(); x += this->delta) {
         for (double y = this->window.starty; y < this->window.endy(); y += this->delta) {
@@ -26,4 +28,18 @@ Structures::Arrow<double> ODE::Tests::FieldGeneratorRandom::generateArrowAtPoint
 Structures::Arrow<double> ODE::Tests::FieldGeneratorFunction::generateArrowAtPoint(Structures::Point<double> point) const {
     const Structures::Point<double> end_point = this->functions(point);
     return { point, point + end_point };
+}
+
+std::vector<Structures::Arrow<double>> ODE::Tests::FieldGeneratorFromFile::generateField() const {
+    std::ifstream file(this->fileName);
+    nlohmann::json j;
+    file >> j;
+    file.close();
+    std::vector<Structures::Arrow<double>> field;
+    for (auto& element : j) {
+        Structures::Point<double> start = {element["x"], element["y"]};
+        Structures::Point<double> delta = {element["dx"], element["dy"]};
+        field.push_back({start, start + delta});
+    }
+    return field;
 }

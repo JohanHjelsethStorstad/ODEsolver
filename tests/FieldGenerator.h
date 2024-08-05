@@ -3,6 +3,7 @@
 #include "../src/structures/Arrow.h"
 #include "../src/structures/Point.h"
 #include <functional>
+#include <string>
 
 namespace ODE::Tests {
     struct FieldGeneratorWindow {
@@ -15,13 +16,19 @@ namespace ODE::Tests {
     };
 
     class FieldGenerator {
+    public:
+        FieldGenerator() = default;
+        virtual std::vector<Structures::Arrow<double>> generateField() const = 0;
+    };
+
+    class FieldGeneratorFixedWindow : public FieldGenerator {
     private:
         double delta;
         FieldGeneratorWindow window;
     public:
-        FieldGenerator(double delta, FieldGeneratorWindow window) : delta{delta}, window{window} {}
+        FieldGeneratorFixedWindow(double delta, FieldGeneratorWindow window) : delta{delta}, window{window} {}
+        std::vector<Structures::Arrow<double>> generateField() const override;
         virtual Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const = 0;
-        std::vector<Structures::Arrow<double>> generateField() const;
     };
 
     struct FieldGeneratorRandomBounds {
@@ -29,16 +36,16 @@ namespace ODE::Tests {
         double max = 10;
     };
 
-    class FieldGeneratorRandom : public FieldGenerator {
+    class FieldGeneratorRandom : public FieldGeneratorFixedWindow {
     private:
         FieldGeneratorRandomBounds bounds;
         double randomDouble() const;
     public:
-        FieldGeneratorRandom(double delta, FieldGeneratorWindow window, FieldGeneratorRandomBounds bounds) : FieldGenerator(delta, window), bounds(bounds) {}
+        FieldGeneratorRandom(double delta, FieldGeneratorWindow window, FieldGeneratorRandomBounds bounds) : FieldGeneratorFixedWindow(delta, window), bounds(bounds) {}
         Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const override;
     };
 
-    class FieldGeneratorFunction : public FieldGenerator {
+    class FieldGeneratorFunction : public FieldGeneratorFixedWindow {
     private:
         std::function<Structures::Point<double>(Structures::Point<double>)> functions;
     public:
@@ -46,7 +53,15 @@ namespace ODE::Tests {
             double delta, 
             FieldGeneratorWindow window, 
             std::function<Structures::Point<double>(Structures::Point<double>)> functions
-        ) : FieldGenerator(delta, window), functions(functions) {}
+        ) : FieldGeneratorFixedWindow(delta, window), functions(functions) {}
         Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const override;
+    };
+
+    class FieldGeneratorFromFile : public FieldGenerator {
+    private:
+        std::string fileName;
+    public:
+        FieldGeneratorFromFile(double delta, FieldGeneratorWindow window, std::string fileName) : fileName(fileName) {}
+        std::vector<Structures::Arrow<double>> generateField() const override;
     };
 }
