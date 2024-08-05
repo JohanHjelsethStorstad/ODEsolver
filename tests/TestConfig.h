@@ -17,7 +17,7 @@ namespace ODE::Tests {
         FieldGeneratorRandomBounds bounds = {-10, 10};
         std::string name = "Test";
         std::vector<Structures::Point<double>> startPoints = {{1.5, 1.5}};
-        std::vector<std::shared_ptr<BucherTableau::IButcherTableau>> schemes = {
+        std::vector<std::shared_ptr<BucherTableau::ButcherTableau>> schemes = {
             std::make_shared<BucherTableau::ExplicitButcherTableau<4>>(BucherTableau::ExplicitButcherTableau<4>::RungeKutta4())
         };
         std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>> inferationSchemes = {

@@ -31,18 +31,18 @@ namespace ODE::Tests {
         std::vector<Trajectory> test(std::vector<Structures::Point<double>> startPoints = {{1.5, 1.5}});
     };
 
-    void runTestSuite();
+    void runTestSuite(const std::string configFileName);
     void storeTest(std::string name, std::vector<Structures::Arrow<double>> primeField, std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories);
 
     class FieldRunner {
     private:
-        std::vector<std::shared_ptr<BucherTableau::IButcherTableau>> schemes;
+        std::vector<std::shared_ptr<BucherTableau::ButcherTableau>> schemes;
         std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>> inferationSchemes;
         std::vector<Structures::Point<double>> startPoints;
         TestConfig config;
     public:
         FieldRunner(
-            const std::vector<std::shared_ptr<BucherTableau::IButcherTableau>>& schemes,
+            const std::vector<std::shared_ptr<BucherTableau::ButcherTableau>>& schemes,
             const std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>>& inferationSchemes,
             const std::vector<Structures::Point<double>>& startPoints,
             const TestConfig& config

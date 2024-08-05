@@ -47,10 +47,16 @@ def show_test_result(name: str) -> None:
         ax.arrow(x, y, dx, dy, lw=1, head_width=0.1, head_length=0.1, color=color(length))
     LIM = 10
     for tag, starts in trajectories.items():
+        xs = []
+        ys = []
+        #Choose a color
+        color = f"#{hash(tag) & 0x00FFFFFF:06X}"
         for start, trajectory in starts.items():
             x, y = zip(*trajectory)
-            ax.plot(x, y, label=tag, linewidth=0.5)  # Draw thin lines between points
-            ax.scatter(x, y)  # Plot the points as well
+            ax.plot(x, y, color=color)  # Draw thin lines between points
+            xs.append(x)
+            ys.append(y)
+        ax.scatter(xs, ys, label=tag, linewidth=0.5, color=color)  # Plot the points as well
     pos = ax.get_position()
     ax.set_position([pos.x0, pos.y0, pos.width * 0.9, pos.height])
     ax.legend(loc='center right', bbox_to_anchor=(1.25, 0.5))

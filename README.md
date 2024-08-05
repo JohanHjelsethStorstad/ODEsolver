@@ -40,7 +40,7 @@ python3 -c "import numpy; print(numpy.get_include())
 
 ## Example of use
 ```cpp
-std::shared_ptr<ODE::BucherTableau::IButcherTableau> butcherTableau = std::make_shared<ODE::BucherTableau::ExplicitButcherTableau<1>>(
+std::shared_ptr<ODE::BucherTableau::ButcherTableau> butcherTableau = std::make_shared<ODE::BucherTableau::ExplicitButcherTableau<1>>(
     ODE::BucherTableau::ExplicitButcherTableau<1>::Euler()
 );
 std::shared_ptr<ODE::PrimeFieldInferation::PrimeFieldInferationScheme> inferationScheme = std::make_shared<ODE::PrimeFieldInferation::PrimeFieldInferationSchemeNearest>();

@@ -8,11 +8,11 @@
  * @param argv Array of command-line arguments.
  */
 int main(int argc, char* argv[]) {
-    if (argc == 1) {
-        throw std::invalid_argument("No arguments provided. Must be test, ...");   
-    }
+    if (argc == 1) throw std::invalid_argument("No arguments provided. Must be test, ...");   
     if (argv[1] == std::string("test")) {
-        ODE::Tests::runTestSuite();
+        if (argc == 2) throw std::invalid_argument("No test provided.");
+        std::string testName = argv[2];
+        ODE::Tests::runTestSuite(testName);
     } else {
         throw std::invalid_argument("Invalid argument provided.");
     }

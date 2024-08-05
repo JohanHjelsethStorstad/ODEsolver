@@ -21,10 +21,22 @@ void ODE::Tests::FieldRunner::run(
             ), config.dt, config.iterations).test(startPoints), scheme->getName() + " " + inferationScheme->getName()});
         }
     }
+    if (knownSolution.has_value()) {
+        for (const auto& startPoint : startPoints) {
+            auto trajectoryFunc = knownSolution->get()->getExactTrajectorySolution(startPoint);
+            Trajectory trajectory = Trajectory(startPoint);
+            Structures::Point<double> point = startPoint;
+            for (int i = 1; i < config.iterations; i++) {
+                point = trajectoryFunc(config.dt * i);
+                trajectory.addPoint(point);
+            }
+            trajectories.push_back({{trajectory}, "Exact"});
+        }
+    }
     storeTest(fieldName, primeField, trajectories);
 }
 
-void ODE::Tests::runTestSuite() {
+void ODE::Tests::runTestSuite(const std::string configFileName) {
     const TestConfig config; //Default values
     auto inferNearest = std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeNearest>(PrimeFieldInferation::PrimeFieldInferationSchemeNearest());
     auto inferWeightedAverage = std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage>(PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage());
@@ -34,10 +46,10 @@ void ODE::Tests::runTestSuite() {
     auto RK3 = std::make_shared<BucherTableau::ExplicitButcherTableau<4>>(BucherTableau::ExplicitButcherTableau<4>::RungeKutta3());
     auto Heun = std::make_shared<BucherTableau::ExplicitButcherTableau<2>>(BucherTableau::ExplicitButcherTableau<2>::Heun());
     
-    std::vector<std::shared_ptr<BucherTableau::IButcherTableau>> schemes = {Euler, RK4, RK3, Heun};
+    std::vector<std::shared_ptr<BucherTableau::ButcherTableau>> schemes = {RK4};
     std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>> inferationSchemes = {inferNearest, inferWeightedAverage};
     const std::vector<Structures::Point<double>> startPoints = {
-        {1.5, 1.5}, {-1.5, -1.5}, {3, 1}, {-3, 1}, {5, 5}, {-5, -5}, {-5, 5}, {5, -5}, {10, -10}, {-10, 10}, {-7, 9}, {7, -9}
+        {1.5, 1.5}, {-1.5, -1.5}, {3, 1}, {-3, 1}, {-7, 9}, {7, -9}
     };
 
     FieldRunner fieldRunner = FieldRunner(schemes, inferationSchemes, startPoints, config);
@@ -87,7 +99,18 @@ void ODE::Tests::runTestSuite() {
         }
     ).generateField();
 
-    fieldRunner.run(functionPrimeField3, "Function (x, y) -> (y, x)", std::nullopt);
+    std::shared_ptr<DynamicalSystem::DynamicalSystemKnownSoulution> knownSoulution3 = std::make_shared<DynamicalSystem::DynamicalSystemKnownSoulution>(
+        [](Structures::Point<double> start, double t) {
+            double c1 = ( start.x + start.y ) / 2;
+            double c2 = ( start.x - start.y ) / 2;
+            return Structures::Point<double> {
+                c1 * std::exp(t) + c2 * std::exp(-t),
+                c1 * std::exp(t) - c2 * std::exp(-t)
+            };
+        }
+    );
+
+    fieldRunner.run(functionPrimeField3, "Function (x, y) -> (y, x)", knownSoulution3);
 }
 
 void ODE::Tests::storeTest(

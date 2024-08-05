@@ -4,7 +4,7 @@
 #include <string>
 
 namespace ODE::BucherTableau {
-	class IButcherTableau {
+	class ButcherTableau {
 	protected:
 		std::string name = "Butcher Tableau";
 	public:
@@ -22,7 +22,7 @@ namespace ODE::BucherTableau {
 	};
 
 	template<int order>
-	class ExplicitButcherTableau : public IButcherTableau {
+	class ExplicitButcherTableau : public ButcherTableau {
 	private:
 		std::array<std::array<double, order>, order> a;
 		std::array<double, order> b;

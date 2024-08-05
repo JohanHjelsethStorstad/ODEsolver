@@ -3,13 +3,30 @@
 #include <iostream>
 #include <vector>
 #include <stdexcept>
+#include "DiagonalizedReturn.h"
 
 namespace Structures::Matrix {
+    
     template<int order>
     class Matrix {
     private:
         std::array<std::array<double, order>, order> matrix;
     public:
+        Matrix(std::array<std::array<double, order>, order> matrix) : matrix(matrix) {}
+        Matrix() {
+            for (int i = 0; i < order; i++) {
+                for (int j = 0; j < order; j++) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        Matrix(const Matrix<order>& other) {
+            for (int i = 0; i < order; i++) {
+                for (int j = 0; j < order; j++) {
+                    matrix[i][j] = other.matrix[i][j];
+                }
+            }
+        }
         Matrix<order> inverse() const {
             Matrix<order> result;
             Matrix<order> augmented;
@@ -103,16 +120,10 @@ namespace Structures::Matrix {
         }
 
         DiaonalizedReturn<order> diagonalize() {
-
-        }
-    };
-
-    template<int order>
-    struct DiaonalizedReturn {
-        Matrix<order> eigenvaluesmatrix;
-        Matrix<order> eigenvectorsmatrix;
-        Matrix<order> getOriginalMatrix() {
-            return eigenvectorsmatrix * eigenvaluesmatrix * eigenvectorsmatrix.inverse();
+            return {
+                Matrix<order>(),
+                Matrix<order>()
+            };
         }
     };
 }; 

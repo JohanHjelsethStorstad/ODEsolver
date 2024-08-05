@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include "structures/Point.h"
+#include "structures/Matrix.h"
 
 namespace ODE::DynamicalSystem {
     /**
@@ -42,9 +43,9 @@ namespace ODE::DynamicalSystem {
     template<int order>
     class LinearDynamicalSystem : public DynamicalSystem {
     private:
-        std::array<std::array<double, order>, order> A;
+        Structures::Matrix::Matrix<order> A;
     public:
-        LinearDynamicalSystem(std::array<std::array<double, order>, order> A) : A(A) {}
+        LinearDynamicalSystem(Structures::Matrix::Matrix<order> A) : A(A) {}
 
         Structures::Point<double> soulution(Structures::Point<double> start, double t) const override {
             return Structures::Point<double>(0, 0);

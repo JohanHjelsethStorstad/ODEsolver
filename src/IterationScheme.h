@@ -10,12 +10,12 @@ namespace ODE {
     class IterationScheme {
     private:
         std::vector<Structures::Arrow<double>> primeField;
-        std::shared_ptr<BucherTableau::IButcherTableau> butcherTableau;
+        std::shared_ptr<BucherTableau::ButcherTableau> butcherTableau;
         std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme> inferationScheme;
     public:
         IterationScheme(
             const std::vector<Structures::Arrow<double>>& primeField, 
-            std::shared_ptr<BucherTableau::IButcherTableau> butcherTableau,
+            std::shared_ptr<BucherTableau::ButcherTableau> butcherTableau,
             std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme> inferationScheme
         ) : primeField(primeField), butcherTableau(butcherTableau), inferationScheme(inferationScheme) {}
         inline void setPrimeField(const std::vector<Structures::Arrow<double>>& primeField) {
