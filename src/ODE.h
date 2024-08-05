@@ -1,26 +1,28 @@
 #pragma once
 #include "./structures/Point.h"
 #include "./structures/Matrix.h"
+#include "./structures/Array.h"
 #include <functional>
+#include <array>
 
 namespace ODE {
-
-    /**
-     * @brief Represents a ordinary differential equation of the form x' = f(x)
-     * of order 2.
-    */
+    template<int order>
     class ODE {
     private:
-        std::function<Structures::Point<double>(Structures::Point<double>)> f;
+        std::function<Structures::Array<double, order>(Structures::Array<double, order>)> f;
     public:
-        ODE(std::function<Structures::Point<double>(Structures::Point<double>)> f) : f(f) {}
-        ODE(Structures::Matrix::Matrix<2> A) : f([A](Structures::Point<double> point) {
-            return Structures::Point<double> {
-                A.get(0, 0) * point.x + A.get(0, 1) * point.y,
-                A.get(1, 0) * point.x + A.get(1, 1) * point.y
-            };
+        ODE(std::function<Structures::Array<double, order>(Structures::Array<double, order>)> f) : f(f) {}
+        ODE(Structures::Matrix::Matrix<order> A) : f([A](Structures::Array<double, order> point) {
+            Structures::array<double, order> result;
+            for (int i = 0; i < order; i++) {
+                result[i] = 0;
+                for (int j = 0; j < order; j++) {
+                    result[i] += A.get(i, j) * point[j];
+                }
+            }
+            return result;
         }) {}
-        inline Structures::Point<double> operator()(Structures::Point<double> x) const {
+        inline Structures::Array<double, order> operator()(Structures::Array<double, order> x) const {
             return f(x);
         }
     };
@@ -36,8 +38,8 @@ namespace ODE {
          * [ -k, 0 ]
          * ]
          */
-        ODE harmonicOscillator(double k) {
-            return ODE(Structures::Matrix::Matrix<2> {{{
+        ODE<2> harmonicOscillator(double k) {
+            return ODE<2>(Structures::Matrix::Matrix<2> {{{
                 {0, 1},
                 {-k, 0}
             }}});
@@ -50,8 +52,8 @@ namespace ODE {
          * [ -1, 0 ]
          * ]
          */
-        ODE circle() {
-            return ODE(Structures::Matrix::Matrix<2> {{{
+        ODE<2> circle() {
+            return ODE<2>(Structures::Matrix::Matrix<2> {{{
                 {0, 1},
                 {-1, 0}
             }}});
@@ -64,8 +66,8 @@ namespace ODE {
          * [ 0, 1 ]
          * ]
          */
-        ODE identity() {
-            return ODE(Structures::Matrix::Matrix<2> {{{
+        ODE<2> identity() {
+            return ODE<2>(Structures::Matrix::Matrix<2> {{{
                 {1, 0},
                 {0, 1}
             }}});
@@ -78,8 +80,8 @@ namespace ODE {
          * [ 1, 0 ]
          * ]
          */
-        ODE crossIdentity() {
-            return ODE(Structures::Matrix::Matrix<2> {{{
+        ODE<2> crossIdentity() {
+            return ODE<2>(Structures::Matrix::Matrix<2> {{{
                 {0, 1},
                 {1, 0}
             }}});
