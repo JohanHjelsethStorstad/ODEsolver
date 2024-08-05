@@ -6,7 +6,6 @@
 #include "DiagonalizedReturn.h"
 
 namespace Structures::Matrix {
-    
     template<int order>
     class Matrix {
     private:

@@ -61,7 +61,7 @@ namespace ODE::Tests {
     private:
         std::string fileName;
     public:
-        FieldGeneratorFromFile(double delta, FieldGeneratorWindow window, std::string fileName) : fileName(fileName) {}
+        FieldGeneratorFromFile(const std::string& fileName) : fileName(fileName) {}
         std::vector<Structures::Arrow<double>> generateField() const override;
     };
 }

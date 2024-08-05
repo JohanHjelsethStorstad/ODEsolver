@@ -111,6 +111,12 @@ void ODE::Tests::runTestSuite(const std::string configFileName) {
     );
 
     fieldRunner.run(functionPrimeField3, "Function (x, y) -> (y, x)", knownSoulution3);
+
+    std::vector<Structures::Arrow<double>> loadedPrimeField = FieldGeneratorFromFile(
+        "fields/field1.json"
+    ).generateField();
+
+    fieldRunner.run(loadedPrimeField, "Loaded", std::nullopt);
 }
 
 void ODE::Tests::storeTest(
