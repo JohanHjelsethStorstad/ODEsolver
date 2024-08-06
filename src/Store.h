@@ -11,9 +11,10 @@ namespace Store {
     private:
         std::string name;
         std::ofstream file;
-        static constexpr const char* STORE_LOCATION = "./store/";
+        std::string location;
+        Store(const std::string& name, const std::string&& location);
     public:
-        Store(const std::string& name);
+        friend class Stores;
         void store(std::vector<Structures::Arrow<double>> arrows, const std::string& tag);
         void store(Structures::Arrow<double> arrow, const std::string& tag);
         void store(std::vector<Structures::Point<double>> points, const std::string& tag);
@@ -21,5 +22,12 @@ namespace Store {
         void store(std::vector<ODE::Trajectory> trajectories, const std::string& tag);
         void store(ODE::Trajectory trajectory, const std::string& tag);
         void write(const std::string& data);
+    };
+
+    class Stores {
+        public:
+            static Store testStore(const std::string& name) {
+                return Store(name, "./tests/out/");
+            }
     };
 };

@@ -4,7 +4,7 @@
 .vscode
 
 # Saved computations
-store
+tests/out
 fields
 
 # Compiled Object files

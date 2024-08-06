@@ -4,7 +4,7 @@ import os
 def show_test_result(name: str) -> None:
     arrows = []
     trajectories = {} # {tag: {start: [(x, y), ...]}}
-    with open(f"store/{name}.txt") as file:
+    with open(f"tests/out/{name}.txt") as file:
         for line in file:
             parts = line[line.find("(")+1:line.find(")")].split(",")
             # Get tag in [...]
@@ -62,13 +62,13 @@ def show_test_result(name: str) -> None:
     ax.legend(loc='center right', bbox_to_anchor=(1.25, 0.5))
     plt.xlim(-LIM, LIM)
     plt.ylim(-LIM, LIM)
-    plt.savefig(f"store/{name}.png")
+    plt.savefig(f"tests/out/{name}.png")
     plt.clf()
     plt.close(fig)
 
 if __name__ == "__main__":
     # Loop throuh all .txt files in store folder
-    for file in os.listdir("store"):
+    for file in os.listdir("tests/out"):
         if file.endswith(".txt"):
             name = file[:-4]
             show_test_result(name)

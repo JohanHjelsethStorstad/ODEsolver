@@ -20,14 +20,13 @@ double ODE::Tests::FieldGeneratorRandom::randomDouble() const {
     return distribution(generator);
 }
 
-Structures::Arrow<double> ODE::Tests::FieldGeneratorRandom::generateArrowAtPoint(Structures::Point<double> point) const {
+Structures::Arrow<double> ODE::Tests::FieldGeneratorRandom::generateArrowAtPoint(const Structures::Point<double>& point) const {
     const Structures::Arrow<double> originArrow = { {0, 0}, { this->randomDouble(), this->randomDouble() } };
     return originArrow.moveBase(point);
 }
 
-Structures::Arrow<double> ODE::Tests::FieldGeneratorFunction::generateArrowAtPoint(Structures::Point<double> point) const {
-    const Structures::Point<double> end_point = this->functions(point);
-    return { point, point + end_point };
+Structures::Arrow<double> ODE::Tests::FieldGeneratorFunction::generateArrowAtPoint(const Structures::Point<double>& point) const {
+    return { point, point + this->ode(point) };
 }
 
 std::vector<Structures::Arrow<double>> ODE::Tests::FieldGeneratorFromFile::generateField() const {

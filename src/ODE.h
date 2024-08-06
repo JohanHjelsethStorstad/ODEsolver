@@ -13,7 +13,7 @@ namespace ODE {
     public:
         ODE(std::function<Structures::Array<double, order>(Structures::Array<double, order>)> f) : f(f) {}
         ODE(Structures::Matrix::Matrix<order> A) : f([A](Structures::Array<double, order> point) {
-            Structures::array<double, order> result;
+            Structures::Array<double, order> result;
             for (int i = 0; i < order; i++) {
                 result[i] = 0;
                 for (int j = 0; j < order; j++) {
@@ -22,27 +22,23 @@ namespace ODE {
             }
             return result;
         }) {}
-        inline Structures::Array<double, order> operator()(Structures::Array<double, order> x) const {
+        inline Structures::Array<double, order> operator()(const Structures::Array<double, order>& x) const {
             return f(x);
         }
-    };
 
-    /**
-     * @brief Contains predefined ODEs.
-     */
-    namespace PreDefinedODE {
         /**
-         * @brief Returns the ODE for a harmonic oscillator with spring constant k.
+         * @brief Returns the ODE solved by the harmonic oscillator.
          * A = [
          * [ 0, 1 ],
          * [ -k, 0 ]
          * ]
          */
-        ODE<2> harmonicOscillator(double k) {
-            return ODE<2>(Structures::Matrix::Matrix<2> {{{
+        static const ODE<2>& HarmonicOscillator(double k) {
+            static ODE<2> harmonicOscillator(Structures::Matrix::Matrix<2> {{{
                 {0, 1},
                 {-k, 0}
             }}});
+            return harmonicOscillator;
         }
 
         /**
@@ -52,11 +48,12 @@ namespace ODE {
          * [ -1, 0 ]
          * ]
          */
-        ODE<2> circle() {
-            return ODE<2>(Structures::Matrix::Matrix<2> {{{
+        static const ODE<2>& Circle() {
+            static ODE<2> circle(Structures::Matrix::Matrix<2> {{{
                 {0, 1},
                 {-1, 0}
             }}});
+            return circle;
         }
 
         /**
@@ -66,11 +63,12 @@ namespace ODE {
          * [ 0, 1 ]
          * ]
          */
-        ODE<2> identity() {
-            return ODE<2>(Structures::Matrix::Matrix<2> {{{
+        static const ODE<2>& Identity() {
+            static ODE<2> identity (Structures::Matrix::Matrix<2> {{{
                 {1, 0},
                 {0, 1}
             }}});
+            return identity;
         }
 
         /**
@@ -80,11 +78,12 @@ namespace ODE {
          * [ 1, 0 ]
          * ]
          */
-        ODE<2> crossIdentity() {
-            return ODE<2>(Structures::Matrix::Matrix<2> {{{
+        static const ODE<2>& CrossIdentity() {
+            static ODE<2> crossIdentity (Structures::Matrix::Matrix<2> {{{
                 {0, 1},
                 {1, 0}
             }}});
+            return crossIdentity;
         }
-    }
+    };
 }

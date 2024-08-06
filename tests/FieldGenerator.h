@@ -2,6 +2,8 @@
 #include <vector>
 #include "../src/structures/Arrow.h"
 #include "../src/structures/Point.h"
+#include "../src/structures/Array.h"
+#include "../src/ODE.h"
 #include <functional>
 #include <string>
 
@@ -28,7 +30,7 @@ namespace ODE::Tests {
     public:
         FieldGeneratorFixedWindow(double delta, FieldGeneratorWindow window) : delta{delta}, window{window} {}
         std::vector<Structures::Arrow<double>> generateField() const override;
-        virtual Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const = 0;
+        virtual Structures::Arrow<double> generateArrowAtPoint(const Structures::Point<double>& point) const = 0;
     };
 
     struct FieldGeneratorRandomBounds {
@@ -42,19 +44,19 @@ namespace ODE::Tests {
         double randomDouble() const;
     public:
         FieldGeneratorRandom(double delta, FieldGeneratorWindow window, FieldGeneratorRandomBounds bounds) : FieldGeneratorFixedWindow(delta, window), bounds(bounds) {}
-        Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const override;
+        Structures::Arrow<double> generateArrowAtPoint(const Structures::Point<double>& point) const override;
     };
 
     class FieldGeneratorFunction : public FieldGeneratorFixedWindow {
     private:
-        std::function<Structures::Point<double>(Structures::Point<double>)> functions;
+        ODE<2> ode;
     public:
         FieldGeneratorFunction(
             double delta, 
             FieldGeneratorWindow window, 
-            std::function<Structures::Point<double>(Structures::Point<double>)> functions
-        ) : FieldGeneratorFixedWindow(delta, window), functions(functions) {}
-        Structures::Arrow<double> generateArrowAtPoint(Structures::Point<double> point) const override;
+            ODE<2> ode
+        ) : FieldGeneratorFixedWindow(delta, window), ode(ode) {}
+        Structures::Arrow<double> generateArrowAtPoint(const Structures::Point<double>& point) const override;
     };
 
     class FieldGeneratorFromFile : public FieldGenerator {

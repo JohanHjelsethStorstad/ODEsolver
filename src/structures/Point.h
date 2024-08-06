@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include "Array.h"
 
 namespace Structures {
 	template<typename T>
@@ -18,6 +19,8 @@ namespace Structures {
 		*/
 		template<typename U>
 		Point(const Point<U>& other) : x(static_cast<T>(other.x)), y(static_cast<T>(other.y)) {}
+		
+		Point(const Array<T, 2>& array) : x(array[0]), y(array[1]) {}
 
 		bool operator==(const Point<T>& other) const {
 			return this->x == other.x && this->y == other.y;

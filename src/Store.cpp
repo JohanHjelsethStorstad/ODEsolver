@@ -1,6 +1,6 @@
 #include "Store.h"
 
-Store::Store::Store(const std::string& name) : name(name), file(STORE_LOCATION + name + ".txt") {
+Store::Store::Store(const std::string& name, const std::string&& location) : name(name), location(location), file(location + name + ".txt") {
     if (!file.is_open()) {
         throw std::runtime_error("Unable to open file: " + this->name);
     }

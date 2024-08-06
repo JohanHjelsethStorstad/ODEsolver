@@ -51,7 +51,7 @@ namespace ODE::Tests {
         void run(
             std::vector<Structures::Arrow<double>> primeField, 
             std::string fieldName,
-            const std::optional<std::shared_ptr<ODE::DynamicalSystem::DynamicalSystem>>& knownSolution
+            const std::optional<std::shared_ptr<DynamicalSystem::DynamicalSystem>>& knownSolution
         );
     };
 }

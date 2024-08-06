@@ -127,9 +127,7 @@ namespace Structures {
 	Arrow<T> operator*(T scalar,const Arrow<T>& arrow) {
 		return { arrow.start, { arrow.start.x + (arrow.end.x - arrow.start.x) * scalar, arrow.start.y + (arrow.end.y - arrow.start.y) * scalar } };
 	}
-}
-
-
+};
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const Structures::Arrow<T>& arrow) {

@@ -5,11 +5,12 @@
 #include <memory>
 #include <vector>
 #include <iostream>
+#include "../src/ODE.h"
 
 void ODE::Tests::FieldRunner::run(
     std::vector<Structures::Arrow<double>> primeField, 
     std::string fieldName, 
-    const std::optional<std::shared_ptr<ODE::DynamicalSystem::DynamicalSystem>>& knownSolution
+    const std::optional<std::shared_ptr<DynamicalSystem::DynamicalSystem>>& knownSolution
 ) {
     std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories;
     for (const auto& scheme : schemes) {
@@ -65,9 +66,7 @@ void ODE::Tests::runTestSuite(const std::string configFileName) {
     std::vector<Structures::Arrow<double>> functionPrimeField1 = FieldGeneratorFunction(
         config.fieldDelta,
         config.window,
-        [](Structures::Point<double> point) {
-            return Structures::Point<double> {point.y, -point.x};
-        }
+        ODE<2>::Circle()
     ).generateField();
 
     std::shared_ptr<DynamicalSystem::DynamicalSystemKnownSoulution> knownSoulution1 = std::make_shared<DynamicalSystem::DynamicalSystemKnownSoulution>(
@@ -84,8 +83,10 @@ void ODE::Tests::runTestSuite(const std::string configFileName) {
     std::vector<Structures::Arrow<double>> functionPrimeField2 = FieldGeneratorFunction(
         config.fieldDelta,
         config.window,
-        [](Structures::Point<double> point) {
-            return Structures::Point<double> {2*point.y + point.x, point.x + 3*point.y};
+        ODE<2> {
+            [](Structures::Point<double> point) {
+                return Structures::Point<double> {2*point.y + point.x, point.x + 3*point.y};
+            }
         }
     ).generateField();
 
@@ -94,9 +95,7 @@ void ODE::Tests::runTestSuite(const std::string configFileName) {
     std::vector<Structures::Arrow<double>> functionPrimeField3 = FieldGeneratorFunction(
         config.fieldDelta,
         config.window,
-        [](Structures::Point<double> point) {
-            return Structures::Point<double> {point.y, point.x};
-        }
+        ODE<2>::CrossIdentity()
     ).generateField();
 
     std::shared_ptr<DynamicalSystem::DynamicalSystemKnownSoulution> knownSoulution3 = std::make_shared<DynamicalSystem::DynamicalSystemKnownSoulution>(
@@ -124,7 +123,7 @@ void ODE::Tests::storeTest(
     std::vector<Structures::Arrow<double>> primeField,
     std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories
 ) {
-    Store::Store store (name);
+    Store::Store store = Store::Stores::testStore(name);
     store.write("Prime field");
     store.store(primeField, "Prime");
     store.write("Trajectory 1");

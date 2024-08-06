@@ -12,4 +12,4 @@ namespace Structures::Matrix {
             return eigenvectorsmatrix * eigenvaluesmatrix * eigenvectorsmatrix.inverse();
         }
     };
-}
+};

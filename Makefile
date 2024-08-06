@@ -34,9 +34,9 @@ $(OBJDIR)/%.o: src/%.cpp | $(OBJDIR)
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-clean_store:
-	rm -rf store
-	mkdir store
+clean_tests:
+	rm -rf tests/out
+	mkdir tests/out
 
 # Clean up build files
 clean:
