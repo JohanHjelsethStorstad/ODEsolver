@@ -9,18 +9,9 @@
 #include <optional>
 #include "../src/Trajectory.h"
 #include "../src/DynamicalSystem.h"
+#include "TestConfig.h"
 
 namespace ODE::Tests {
-    struct TestConfig {
-        int iterations = 1000;
-        double dt = 0.2;
-
-        double fieldDelta = 0.1;
-        FieldGeneratorWindow window = {20, 20, -10, -10};
-
-        FieldGeneratorRandomBounds bounds = {-10, 10};
-    };
-
     class TestIteration {
     private:
         IterationScheme scheme;

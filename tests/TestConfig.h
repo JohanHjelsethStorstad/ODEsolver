@@ -24,6 +24,6 @@ namespace ODE::Tests {
             std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeNearest>(PrimeFieldInferation::PrimeFieldInferationSchemeNearest())
         };
         TestConfig() = default;
-        void loadFromFile(std::string configFileName);
+        const TestConfig& loadFromFile(std::string configFileName);
     };
 }

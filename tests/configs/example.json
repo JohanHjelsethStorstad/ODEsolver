@@ -1,14 +1,19 @@
 {
-    "startPoints": [
-        {
-            "x": 0,
-            "y": 0
-        },
-        {
-            "x": 0,
-            "y": 1
-        }
-    ],
-    "schemes": ["RK4", "Euler"],
-    "inferationSchemes": ["Nearest"]
+    "test": {
+        "startPoints": [
+            {
+                "x": 0,
+                "y": 0
+            },
+            {
+                "x": 0,
+                "y": 1
+            }
+        ],
+        "schemes": ["RK4", "Euler"],
+        "inferationSchemes": ["Nearest"]
+    },
+    "plot": {
+        
+    }
 }

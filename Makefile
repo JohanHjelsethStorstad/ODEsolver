@@ -34,9 +34,10 @@ $(OBJDIR)/%.o: src/%.cpp | $(OBJDIR)
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
+# Remove all files except .gitignore
 clean_tests:
-	rm -rf tests/out
-	mkdir tests/out
+	rm -rf tests/out/*.png tests/out/*.txt
+
 
 # Clean up build files
 clean:

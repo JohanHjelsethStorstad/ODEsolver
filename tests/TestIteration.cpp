@@ -38,7 +38,7 @@ void ODE::Tests::FieldRunner::run(
 }
 
 void ODE::Tests::runTestSuite(const std::string configFileName) {
-    const TestConfig config; //Default values
+    const TestConfig config = TestConfig().loadFromFile(configFileName);
     auto inferNearest = std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeNearest>(PrimeFieldInferation::PrimeFieldInferationSchemeNearest());
     auto inferWeightedAverage = std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage>(PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage());
 
