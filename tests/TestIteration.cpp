@@ -13,17 +13,17 @@ void ODE::Tests::FieldRunner::run(
     const std::optional<std::shared_ptr<DynamicalSystem::DynamicalSystem>>& knownSolution
 ) {
     std::vector<std::pair<std::vector<Trajectory>, std::string>> trajectories;
-    for (const auto& scheme : schemes) {
-        for (const auto& inferationScheme : inferationSchemes) {
+    for (const auto& scheme : config.schemes) {
+        for (const auto& inferationScheme : config.inferationSchemes) {
             trajectories.push_back({TestIteration(IterationScheme(
                 primeField,
                 scheme,
                 inferationScheme
-            ), config.dt, config.iterations).test(startPoints), scheme->getName() + " " + inferationScheme->getName()});
+            ), config.dt, config.iterations).test(config.startPoints), scheme->getName() + " " + inferationScheme->getName()});
         }
     }
     if (knownSolution.has_value()) {
-        for (const auto& startPoint : startPoints) {
+        for (const auto& startPoint : config.startPoints) {
             auto trajectoryFunc = knownSolution->get()->getExactTrajectorySolution(startPoint);
             Trajectory trajectory = Trajectory(startPoint);
             Structures::Point<double> point = startPoint;
@@ -39,21 +39,8 @@ void ODE::Tests::FieldRunner::run(
 
 void ODE::Tests::runTestSuite(const std::string configFileName) {
     const TestConfig config = TestConfig().loadFromFile(configFileName);
-    auto inferNearest = std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeNearest>(PrimeFieldInferation::PrimeFieldInferationSchemeNearest());
-    auto inferWeightedAverage = std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage>(PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage());
 
-    auto Euler = std::make_shared<BucherTableau::ExplicitButcherTableau<1>>(BucherTableau::ExplicitButcherTableau<1>::Euler());
-    auto RK4 = std::make_shared<BucherTableau::ExplicitButcherTableau<4>>(BucherTableau::ExplicitButcherTableau<4>::RungeKutta4());
-    auto RK3 = std::make_shared<BucherTableau::ExplicitButcherTableau<4>>(BucherTableau::ExplicitButcherTableau<4>::RungeKutta3());
-    auto Heun = std::make_shared<BucherTableau::ExplicitButcherTableau<2>>(BucherTableau::ExplicitButcherTableau<2>::Heun());
-    
-    std::vector<std::shared_ptr<BucherTableau::ButcherTableau>> schemes = {RK4};
-    std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>> inferationSchemes = {inferNearest, inferWeightedAverage};
-    const std::vector<Structures::Point<double>> startPoints = {
-        {1.5, 1.5}, {-1.5, -1.5}, {3, 1}, {-3, 1}, {-7, 9}, {7, -9}
-    };
-
-    FieldRunner fieldRunner = FieldRunner(schemes, inferationSchemes, startPoints, config);
+    FieldRunner fieldRunner = FieldRunner(config);
 
     std::vector<Structures::Arrow<double>> randomPrimeField = FieldGeneratorRandom(
         config.fieldDelta, 

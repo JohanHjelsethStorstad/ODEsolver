@@ -27,17 +27,11 @@ namespace ODE::Tests {
 
     class FieldRunner {
     private:
-        std::vector<std::shared_ptr<BucherTableau::ButcherTableau>> schemes;
-        std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>> inferationSchemes;
-        std::vector<Structures::Point<double>> startPoints;
         TestConfig config;
     public:
         FieldRunner(
-            const std::vector<std::shared_ptr<BucherTableau::ButcherTableau>>& schemes,
-            const std::vector<std::shared_ptr<PrimeFieldInferation::PrimeFieldInferationScheme>>& inferationSchemes,
-            const std::vector<Structures::Point<double>>& startPoints,
             const TestConfig& config
-        ) : schemes(schemes), inferationSchemes(inferationSchemes), startPoints(startPoints), config(config) {}
+        ) : config(config) {}
 
         void run(
             std::vector<Structures::Arrow<double>> primeField, 

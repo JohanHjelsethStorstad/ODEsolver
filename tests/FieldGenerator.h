@@ -9,10 +9,10 @@
 
 namespace ODE::Tests {
     struct FieldGeneratorWindow {
-        double width;
-        double height;
-        double startx;
-        double starty;
+        double width = 20;
+        double height = 20;
+        double startx = -10;
+        double starty = -10;
         inline double endx() const { return startx + width; }
         inline double endy() const { return starty + height; }
     };
