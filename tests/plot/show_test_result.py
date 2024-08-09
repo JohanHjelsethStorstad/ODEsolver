@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import os
+import argparse
 
 def show_test_result(name: str) -> None:
     arrows = []
@@ -68,7 +69,8 @@ def show_test_result(name: str) -> None:
 
 if __name__ == "__main__":
     # Loop throuh all .txt files in store folder
-    for file in os.listdir("tests/out"):
-        if file.endswith(".txt"):
-            name = file[:-4]
-            show_test_result(name)
+    # Look at argument for file name
+    parser = argparse.ArgumentParser(description="Process some files.")
+    parser.add_argument('filename', type=str, help='The name of the file to process')
+    args = parser.parse_args()
+    show_test_result(args.filename)

@@ -38,71 +38,33 @@ void ODE::Tests::FieldRunner::run(
 }
 
 void ODE::Tests::runTestSuite(const std::string configFileName) {
-    const TestConfig config = TestConfig().loadFromFile(configFileName);
+    const Config::TestConfig config = Config::TestConfig().loadFromFile(configFileName);
 
     FieldRunner fieldRunner = FieldRunner(config);
-
-    std::vector<Structures::Arrow<double>> randomPrimeField = FieldGeneratorRandom(
-        config.fieldDelta, 
-        config.window,
-        config.bounds
-    ).generateField();
-
-    fieldRunner.run(randomPrimeField, "Random", std::nullopt);
-
-    std::vector<Structures::Arrow<double>> functionPrimeField1 = FieldGeneratorFunction(
-        config.fieldDelta,
-        config.window,
-        ODE<2>::Circle()
-    ).generateField();
-
-    std::shared_ptr<DynamicalSystem::DynamicalSystemKnownSoulution> knownSoulution1 = std::make_shared<DynamicalSystem::DynamicalSystemKnownSoulution>(
-        [](Structures::Point<double> start, double t) {
-            return Structures::Point<double> {
-                start.y * std::sin(t) + start.x * std::cos(t),
-                -start.x * std::sin(t) + start.y * std::cos(t)
-            };
-        }
-    );
-
-    fieldRunner.run(functionPrimeField1, "Function (x, y) -> (y, -x)", knownSoulution1);
-
-    std::vector<Structures::Arrow<double>> functionPrimeField2 = FieldGeneratorFunction(
-        config.fieldDelta,
-        config.window,
-        ODE<2> {
-            [](Structures::Point<double> point) {
-                return Structures::Point<double> {2*point.y + point.x, point.x + 3*point.y};
-            }
-        }
-    ).generateField();
-
-    fieldRunner.run(functionPrimeField2, "Function (x, y) -> (2y + x, x + 3y)", std::nullopt);
-
-    std::vector<Structures::Arrow<double>> functionPrimeField3 = FieldGeneratorFunction(
-        config.fieldDelta,
-        config.window,
-        ODE<2>::CrossIdentity()
-    ).generateField();
-
-    std::shared_ptr<DynamicalSystem::DynamicalSystemKnownSoulution> knownSoulution3 = std::make_shared<DynamicalSystem::DynamicalSystemKnownSoulution>(
-        [](Structures::Point<double> start, double t) {
-            double c1 = ( start.x + start.y ) / 2;
-            double c2 = ( start.x - start.y ) / 2;
-            return Structures::Point<double> {
-                c1 * std::exp(t) + c2 * std::exp(-t),
-                c1 * std::exp(t) - c2 * std::exp(-t)
-            };
-        }
-    );
-
-    fieldRunner.run(functionPrimeField3, "Function (x, y) -> (y, x)", knownSoulution3);
-
-    std::vector<Structures::Arrow<double>> loadedPrimeField = FieldGeneratorFromFile(
-        "fields/field1.json"
-    ).generateField();
-
-    fieldRunner.run(loadedPrimeField, "Loaded", std::nullopt);
+    
+    std::vector<Structures::Arrow<double>> primeField;
+    switch (config.fieldGeneratorInfo.type) {
+        case Config::FieldGeneratorType::RANDOM:
+            primeField = FieldGeneratorRandom(
+                config.fieldDelta,
+                config.window,
+                config.fieldGeneratorInfo.bounds
+            ).generateField();
+            break;
+        case Config::FieldGeneratorType::FUNCTION:
+            primeField = FieldGeneratorFunction(
+                config.fieldDelta,
+                config.window,
+                config.fieldGeneratorInfo.preProgrammedODE
+            ).generateField();
+            break;
+        case Config::FieldGeneratorType::LOAD_FROM_FILE:
+            primeField = FieldGeneratorFromFile(
+                config.fieldGeneratorInfo.fileName
+            ).generateField();
+            break;
+    }
+    fieldRunner.run(primeField, configFileName, config.knownSolution);
 }
 
 void ODE::Tests::storeTest(

@@ -27,10 +27,10 @@ namespace ODE::Tests {
 
     class FieldRunner {
     private:
-        TestConfig config;
+        Config::TestConfig config;
     public:
         FieldRunner(
-            const TestConfig& config
+            const Config::TestConfig& config
         ) : config(config) {}
 
         void run(

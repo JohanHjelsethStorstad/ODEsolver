@@ -33,6 +33,32 @@ namespace ODE::DynamicalSystem {
         Structures::Point<double> soulution(Structures::Point<double> start, double t) const override {
             return knownSoulution(start, t);
         }
+
+        static std::shared_ptr<DynamicalSystemKnownSoulution> Circle() { 
+            static auto ds = std::make_shared<DynamicalSystemKnownSoulution>(
+                [](Structures::Point<double> start, double t) {
+                    return Structures::Point<double> {
+                        start.y * std::sin(t) + start.x * std::cos(t),
+                        -start.x * std::sin(t) + start.y * std::cos(t)
+                    };
+                }
+            );
+            return ds;
+        }
+
+        static std::shared_ptr<DynamicalSystemKnownSoulution> CrossIdentity() { 
+            static auto ds = std::make_shared<DynamicalSystemKnownSoulution>(
+                [](Structures::Point<double> start, double t) {
+                    double c1 = ( start.x + start.y ) / 2;
+                    double c2 = ( start.x - start.y ) / 2;
+                    return Structures::Point<double> {
+                        c1 * std::exp(t) + c2 * std::exp(-t),
+                        c1 * std::exp(t) - c2 * std::exp(-t)
+                    };
+                }
+            );
+            return ds;
+        }
     };
 
     /**
