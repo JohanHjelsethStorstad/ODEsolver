@@ -10,7 +10,9 @@ const std::map<std::string, std::shared_ptr<ODE::BucherTableau::ButcherTableau>>
 };
 const std::map<std::string, std::shared_ptr<ODE::PrimeFieldInferation::PrimeFieldInferationScheme>> ODE::Tests::Config::TestConfig::availableInferationSchemes = {
     {"Nearest", std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeNearest>(PrimeFieldInferation::PrimeFieldInferationSchemeNearest())},
-    {"Weighted Average", std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage>(PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage())}
+    {"Weighted Average", std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage>(PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverage())},
+    {"Weighted Average 4 Inverse linear", std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverageNInverseLinear<4>>(PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverageNInverseLinear<4>())},
+    {"Weighted Average 8 Inverse linear", std::make_shared<PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverageNInverseLinear<8>>(PrimeFieldInferation::PrimeFieldInferationSchemeWeightedAverageNInverseLinear<8>())}
 };
 const std::map<std::string, std::shared_ptr<ODE::DynamicalSystem::DynamicalSystemKnownSoulution>> ODE::Tests::Config::TestConfig::availableKnownSolutions = {
     {"Circle", DynamicalSystem::DynamicalSystemKnownSoulution::Circle()},

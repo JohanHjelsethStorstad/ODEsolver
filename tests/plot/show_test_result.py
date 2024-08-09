@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import os
 import argparse
 import json
+import random
 
 def show_test_result(name: str) -> None:
     config = json.load(open(f"tests/configs/{name}.json"))['test']
@@ -23,7 +24,23 @@ def show_test_result(name: str) -> None:
                 if start not in trajectories[tag]:
                     trajectories[tag][start] = []
                 trajectories[tag][start].append((float(parts[0]), float(parts[1])))
-    arrows = arrows[::73]
+    
+    #filter arrows:
+    #Remve arrows outside window
+    window = config['window']
+    stratx = window['startx']
+    endx = window['startx'] + window['width']
+    straty = window['starty']
+    endy = window['starty'] + window['height']
+    for arrow in arrows:
+        if arrow[0] < stratx or arrow[0] > endx or arrow[2] < stratx or arrow[2] > endx or arrow[1] < straty or arrow[1] > endy or arrow[3] < straty or arrow[3] > endy:
+            arrows.remove(arrow)
+    #choose some random arrows to actually render
+    AMOUNT_OF_ARROWS_TO_RENDER = 700
+    if len(arrows) > AMOUNT_OF_ARROWS_TO_RENDER:
+        random.shuffle(arrows)
+        arrows = arrows[:AMOUNT_OF_ARROWS_TO_RENDER]
+    
     # Plot trajectory and arrows
     longest_length = 0
     for arrow in arrows:
@@ -63,14 +80,10 @@ def show_test_result(name: str) -> None:
     ax.set_position([pos.x0, pos.y0, pos.width * 0.9, pos.height])
     ax.legend(loc='center right', bbox_to_anchor=(1.25, 0.5))
     
-    window = config['window']
-    stratx = window['startx']
-    endx = window['startx'] + window['width']
-    straty = window['starty']
-    endy = window['starty'] + window['height']
+    
     plt.xlim(stratx, endx)
     plt.ylim(straty, endy)
-    
+
     plt.savefig(f"tests/out/{name}.png")
     plt.clf()
     plt.close(fig)
