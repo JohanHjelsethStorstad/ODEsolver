@@ -1,8 +1,10 @@
 from matplotlib import pyplot as plt
 import os
 import argparse
+import json
 
 def show_test_result(name: str) -> None:
+    config = json.load(open(f"tests/configs/{name}.json"))['test']
     arrows = []
     trajectories = {} # {tag: {start: [(x, y), ...]}}
     with open(f"tests/out/{name}.txt") as file:
@@ -46,7 +48,6 @@ def show_test_result(name: str) -> None:
         color = lambda length: f"#{amount_of_red:02X}00{amount_of_blue:02X}"
         
         ax.arrow(x, y, dx, dy, lw=1, head_width=0.1, head_length=0.1, color=color(length))
-    LIM = 10
     for tag, starts in trajectories.items():
         xs = []
         ys = []
@@ -61,8 +62,15 @@ def show_test_result(name: str) -> None:
     pos = ax.get_position()
     ax.set_position([pos.x0, pos.y0, pos.width * 0.9, pos.height])
     ax.legend(loc='center right', bbox_to_anchor=(1.25, 0.5))
-    plt.xlim(-LIM, LIM)
-    plt.ylim(-LIM, LIM)
+    
+    window = config['window']
+    stratx = window['startx']
+    endx = window['startx'] + window['width']
+    straty = window['starty']
+    endy = window['starty'] + window['height']
+    plt.xlim(stratx, endx)
+    plt.ylim(straty, endy)
+    
     plt.savefig(f"tests/out/{name}.png")
     plt.clf()
     plt.close(fig)

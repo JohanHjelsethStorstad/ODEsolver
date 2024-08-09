@@ -4,10 +4,10 @@
         "dt": 0.1,
         "fieldDelta": 0.1,
         "window": {
-            "startx": 10,
-            "starty": 10,
-            "width": 100,
-            "height": 100
+            "startx": -10,
+            "starty": -10,
+            "width": 20,
+            "height": 20
         },
         "startPoints": [
             {

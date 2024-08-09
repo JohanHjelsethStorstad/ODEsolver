@@ -30,7 +30,7 @@ Structures::Arrow<double> ODE::Tests::FieldGeneratorFunction::generateArrowAtPoi
 }
 
 std::vector<Structures::Arrow<double>> ODE::Tests::FieldGeneratorFromFile::generateField() const {
-    std::ifstream file(this->fileName);
+    std::ifstream file("./tests/fields/" + this->fileName);
     nlohmann::json j;
     file >> j;
     file.close();
